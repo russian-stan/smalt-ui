@@ -1,0 +1,45 @@
+@use '../../styles/tools';
+@use 'sass:map';
+
+// Label size → font scale.
+$sizes: (
+  sm: xs,
+  md: sm,
+  lg: base,
+);
+
+// display: inline, not inline-flex: in a flex container every slot node (text, link, text
+// again) becomes a separate item, and on a narrow screen the phrase splits across lines.
+.s-label {
+  @include tools.reset-inherited;
+  display: inline;
+  font-weight: var(--s-font-weight-medium);
+  color: var(--s-color-text);
+
+  // A label linked to a control via `for` is clickable, and the cursor says so.
+  &[for]:not(&--disabled) {
+    cursor: pointer;
+  }
+
+  @each $name, $fs in $sizes {
+    &--#{$name} {
+      font-size: var(--s-font-size-#{$fs});
+    }
+  }
+
+  &--disabled {
+    color: var(--s-color-text-subtle);
+    cursor: not-allowed;
+  }
+
+  // A non-breaking space instead of a margin: otherwise in a two-line label the asterisk
+  // wraps apart from the last word and hangs on its own.
+  &__required {
+    color: var(--s-color-negative);
+    white-space: nowrap;
+
+    &::before {
+      content: '\00a0';
+    }
+  }
+}

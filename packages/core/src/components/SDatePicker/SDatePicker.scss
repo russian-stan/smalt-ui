@@ -1,0 +1,114 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+.s-date-picker {
+  &__control {
+    @include tools.segmented-field-control;
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__segment {
+    @include tools.segmented-field-segment;
+  }
+
+  // --s-field-pad-x comes from control-size on .s-date-picker__control.
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  // With a floating label, placeholder segments (mm/dd/yyyy) are hidden at rest, since the
+  // label plays their role; they appear on focus or when filled.
+  &__control--floating:not(:focus-within):not([data-filled]) &__segment {
+    color: transparent;
+  }
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    color: var(--s-color-text-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--s-radius-full);
+    cursor: pointer;
+    @include tools.state-layer;
+    @include tools.disabled-state;
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  @each $name in $sizes {
+    &--#{$name} &__control {
+      @include tools.control-size($name);
+    }
+  }
+}
+
+// Calendar popup (a portal to the document root, so outside the .s-date-picker block).
+.s-date-picker__content {
+  @include tools.reset-inherited;
+  z-index: var(--s-z-popover, 50);
+  padding: var(--s-space-3);
+  color: var(--s-color-text);
+  @include tools.floating-surface;
+
+  .s-date-picker__cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-space-2);
+    margin-bottom: var(--s-space-3);
+  }
+
+  .s-date-picker__nav {
+    @include tools.calendar-nav;
+  }
+
+  .s-date-picker__heading {
+    @include tools.calendar-heading;
+  }
+
+  .s-date-picker__grid {
+    border-collapse: collapse;
+    @include tools.calendar-table-reset;
+  }
+
+  .s-date-picker__cal-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .s-date-picker__weekday {
+    @include tools.calendar-weekday;
+  }
+
+  .s-date-picker__cell {
+    padding: 1px;
+  }
+
+  .s-date-picker__day {
+    @include tools.calendar-day;
+  }
+}
+
+.s-date-picker__content--square {
+  --s-surface-radius: 0;
+}

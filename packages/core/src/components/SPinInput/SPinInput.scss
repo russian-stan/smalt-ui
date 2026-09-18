@@ -1,0 +1,48 @@
+@use '../../styles/tools';
+
+// No outer field-shell frame: each cell has its own border, and a shared frame would double it.
+.s-pin-input__wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-space-2);
+}
+
+.s-pin-input__prepend {
+  @include tools.field-affix;
+}
+
+.s-pin-input__append {
+  @include tools.field-affix;
+}
+
+.s-pin-input__control {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--s-space-2);
+}
+
+.s-pin-input__cell {
+  width: 2.75rem;
+  height: 2.75rem;
+  font-family: var(--s-font-sans);
+  font-size: var(--s-font-size-lg);
+  font-weight: var(--s-font-weight-medium);
+  color: var(--s-color-text);
+  text-align: center;
+  background-color: var(--s-color-surface);
+  border: 1px solid var(--s-color-outline);
+  // Cell radius comes from --s-field-radius (the square prop on SFormField zeroes it).
+  border-radius: var(--s-field-radius, var(--s-radius-sm));
+  outline: none;
+  @include tools.transition(border-color);
+  @include tools.disabled-state;
+
+  &:focus {
+    border-color: var(--s-color-primary);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--s-color-negative);
+  }
+}

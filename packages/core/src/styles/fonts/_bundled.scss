@@ -1,0 +1,6 @@
+// Entry for dist/fonts.css. Built by the plain Sass CLI, so url() stays literal and resolves
+// relative to the CSS file itself — hence the path from the dist root, not '../../fonts/'.
+// Consumers get it via the @smalt-ui/core/fonts.css subpath.
+@use 'faces';
+
+@include faces.faces('./fonts/');

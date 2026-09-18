@@ -1,0 +1,15 @@
+@use '../../styles/tools';
+.s-radio-group {
+  @include tools.reset-inherited;
+  display: flex;
+  gap: var(--s-radio-group-gap, var(--s-space-3));
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

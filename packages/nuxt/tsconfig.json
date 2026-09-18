@@ -1,0 +1,5 @@
+{
+  "extends": "./playground/.nuxt/tsconfig.json",
+  // Replaces the parent include; nuxt.node.d.ts adds @nuxt/schema augmentations (options.nitro).
+  "include": ["src/**/*", "playground/.nuxt/nuxt.node.d.ts"]
+}

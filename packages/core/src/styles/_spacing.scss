@@ -1,0 +1,84 @@
+// Spacing utility classes (.s-pa-*/.s-ma-*) and their responsive variants .s-pa-{bp}-{k}.
+// Directions are physical: l/r/t/b mean literally left/right/top/bottom.
+@use 'settings';
+@use 'tools';
+
+@layer smalt.utilities {
+  // Full padding/margin set for one breakpoint. $infix is '' (xs) or '-sm'/'-md'/…
+  @mixin spacing-set($infix) {
+    @each $k, $v in settings.$spacing {
+      $s: var(--s-space-#{$k});
+
+      .s-pa#{$infix}-#{$k} {
+        padding: $s;
+      }
+      .s-pt#{$infix}-#{$k} {
+        padding-top: $s;
+      }
+      .s-pr#{$infix}-#{$k} {
+        padding-right: $s;
+      }
+      .s-pb#{$infix}-#{$k} {
+        padding-bottom: $s;
+      }
+      .s-pl#{$infix}-#{$k} {
+        padding-left: $s;
+      }
+      .s-px#{$infix}-#{$k} {
+        padding-left: $s;
+        padding-right: $s;
+      }
+      .s-py#{$infix}-#{$k} {
+        padding-top: $s;
+        padding-bottom: $s;
+      }
+
+      .s-ma#{$infix}-#{$k} {
+        margin: $s;
+      }
+      .s-mt#{$infix}-#{$k} {
+        margin-top: $s;
+      }
+      .s-mr#{$infix}-#{$k} {
+        margin-right: $s;
+      }
+      .s-mb#{$infix}-#{$k} {
+        margin-bottom: $s;
+      }
+      .s-ml#{$infix}-#{$k} {
+        margin-left: $s;
+      }
+      .s-mx#{$infix}-#{$k} {
+        margin-left: $s;
+        margin-right: $s;
+      }
+      .s-my#{$infix}-#{$k} {
+        margin-top: $s;
+        margin-bottom: $s;
+      }
+    }
+
+    // Auto margins (horizontal only): center a block / push it to an edge of a flex container.
+    .s-ml#{$infix}-auto {
+      margin-left: auto;
+    }
+    .s-mr#{$infix}-auto {
+      margin-right: auto;
+    }
+    .s-mx#{$infix}-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  // Mobile-first cascade: xs is the base set without an infix; sm/md/lg/xl go in @media.
+  @each $bp, $min in settings.$breakpoints {
+    $infix: '-#{$bp}';
+    @if $bp == xs {
+      $infix: '';
+    }
+    @include tools.respond-to($bp) {
+      @include spacing-set($infix);
+    }
+  }
+}

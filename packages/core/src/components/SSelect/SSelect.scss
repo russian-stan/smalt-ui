@@ -1,0 +1,270 @@
+@use '../../styles/tools';
+
+// Both branches (Reka Select and the searchable Combobox) share one .s-select__control frame.
+// Its flex children have a fixed order:
+// prepend · leading · trigger/input · clear · append · chevron.
+// Minimum height of the tags frame per size: chips wrap, so the height grows.
+$tag-heights: (
+  sm: 2rem,
+  md: 2.5rem,
+  lg: 3rem,
+);
+
+.s-select {
+  // The minimum is soft: the frame spans the parent width, but in a narrow grid column it shrinks
+  // with it instead of overflowing. --s-select-min-width sets a hard floor.
+  &__control {
+    @include tools.field-shell;
+    gap: var(--s-space-2);
+    min-inline-size: var(--s-select-min-width, 0);
+  }
+
+  &__control--tags {
+    flex-wrap: wrap;
+    row-gap: var(--s-space-1);
+  }
+
+  // Frame height/padding/font come from control-size for the field size. The tags frame
+  // overrides the height in the same iteration (equal specificity, order decides).
+  @each $name, $min-height in $tag-heights {
+    &--#{$name} &__control {
+      @include tools.control-size($name);
+    }
+
+    &--#{$name} &__control--tags {
+      height: auto;
+      min-height: $min-height;
+      padding-block: var(--s-space-1);
+    }
+  }
+
+  &__tag {
+    flex: none;
+  }
+
+  // Multiple mode without tags: a comma-separated list of the selected labels.
+  &__comma {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    font: inherit;
+    color: var(--s-color-text);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__placeholder {
+    color: var(--s-color-text-subtle);
+  }
+
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  &__control--has-leading {
+    @include tools.field-label-leading;
+  }
+
+  // Floating label, searchable: the native placeholder is hidden at rest (the label plays its
+  // role) and shows only on focus.
+  &__control--floating &__input::placeholder {
+    color: transparent;
+  }
+
+  &__control--floating:focus-within &__input::placeholder {
+    color: var(--s-color-text-subtle);
+  }
+
+  // Floating label, plain select: the placeholder is a <span>, not the native ::placeholder;
+  // with floating the label plays its role, so it is hidden entirely.
+  &__control--floating &__placeholder {
+    visibility: hidden;
+  }
+
+  &__trigger {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    gap: var(--s-space-2);
+    height: 100%;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    // Clicks work on the whole frame, not just the narrow trigger: an invisible overlay spans
+    // the entire .s-select__control (the nearest positioned ancestor is field-shell: relative).
+    // Icons (leading/chevron) have pointer-events: none, so a click passes through them to the
+    // overlay and opens the list; interactive adornments are raised above it with z-index (see
+    // below) and are clicked directly (they are siblings of the trigger, not descendants, so they
+    // do not open the list).
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+  }
+
+  // Raised above the trigger's click overlay so clicks on them work instead of opening the list.
+  &__prepend,
+  &__append,
+  &__clear,
+  &__tag {
+    position: relative;
+    z-index: 1;
+  }
+
+  // searchable mode: an input instead of the trigger.
+  &__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  // searchable mode: the chevron button that opens the list (separate from the input).
+  &__toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--s-color-text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  &__leading {
+    flex: none;
+    color: var(--s-color-text-muted);
+    pointer-events: none;
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--s-color-text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: var(--s-radius-full);
+    @include tools.transition(color);
+
+    &:hover {
+      color: var(--s-color-text);
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  &__item-icon {
+    display: inline-flex;
+    color: var(--s-color-text-muted);
+  }
+
+  // The chevron is the rightmost flex child. In select it is a decorative icon (it does not
+  // intercept clicks; the trigger itself opens the list); in combobox it sits inside the
+  // __toggle button.
+  &__icon {
+    flex: none;
+    display: inline-flex;
+    color: var(--s-color-text-muted);
+    pointer-events: none;
+    @include tools.transition(transform);
+  }
+
+  // Chevron rotation when open: select uses the --open class (state from SelectRoot),
+  // combobox uses data-state on the __toggle trigger button.
+  &__icon--open,
+  &__toggle[data-state='open'] &__icon {
+    transform: rotate(180deg);
+  }
+
+  &__content {
+    @include tools.reset-inherited;
+    @include tools.floating-surface;
+    z-index: var(--s-z-dropdown);
+    // Trigger width: Reka sets different CSS variables for Select and Combobox, so the select
+    // variable is used, falling back to the combobox one (searchable).
+    min-width: var(--reka-select-trigger-width, var(--reka-combobox-trigger-width, 12rem));
+    overflow: hidden;
+
+    &--square {
+      --s-surface-radius: 0;
+    }
+  }
+
+  // Without a limit the height grows with the number of options, the panel goes off screen,
+  // and overflow: hidden above clips it with no scroll. Reka reports the space left to the
+  // window edge; the smaller of that and the configurable limit wins.
+  &__viewport {
+    max-block-size: min(
+      var(--s-select-max-height, 20rem),
+      var(--reka-select-content-available-height, 100vh),
+      var(--reka-combobox-content-available-height, 100vh)
+    );
+    padding: var(--s-space-1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--s-space-2);
+    padding: var(--s-space-2) var(--s-space-3);
+    font-family: var(--s-font-sans);
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text);
+    border-radius: var(--s-radius-sm);
+    cursor: pointer;
+    user-select: none;
+    @include tools.interactive-item;
+  }
+
+  &__indicator {
+    display: inline-flex;
+    width: 1em;
+    color: var(--s-color-primary-text);
+  }
+
+  // searchable mode: the message shown when nothing matches.
+  &__empty {
+    padding: var(--s-space-3);
+    font-family: var(--s-font-sans);
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+    text-align: center;
+  }
+}

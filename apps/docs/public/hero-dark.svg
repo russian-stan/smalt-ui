@@ -1,0 +1,77 @@
+<svg width="560" height="440" viewBox="0 0 560 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    The facet is a copy of the right diamond clipped by the left one. The clip sits in a group
+    that moves with the left diamond, so the copy only gets the relative motion: double the
+    shift and the same turn. The right diamond's spot group carries an invisible copy of the
+    diamond so that its fill-box, and with it the rotation center, matches the diamond's.
+  -->
+  <style>
+    .a, .b, .facet {
+      animation-duration: 2.4s, 1.2s;
+      animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1), ease-out;
+      animation-fill-mode: both;
+    }
+    .b, .facet {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .a { animation-name: move-a, fade; }
+    .b { animation-name: move-b, fade; }
+    .facet { animation-name: move-facet; }
+    @keyframes move-a { from { transform: translateX(-24px); } }
+    @keyframes move-b { from { transform: translateX(24px) rotate(360deg); } }
+    @keyframes move-facet { from { transform: translateX(48px) rotate(360deg); } }
+    @keyframes fade { from { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .a, .b, .facet { animation: none; }
+    }
+  </style>
+  <defs>
+  <radialGradient id="lens-a" cx="0.42" cy="0.4" r="0.72" fx="0.37" fy="0.32">
+  <stop offset="0" stop-color="#badefb"/>
+  <stop offset="0.55" stop-color="#90caf9"/>
+  <stop offset="1" stop-color="#709ec2"/>
+  </radialGradient>
+  <radialGradient id="lens-b" cx="0.42" cy="0.4" r="0.72" fx="0.37" fy="0.32">
+  <stop offset="0" stop-color="#8ac7f9"/>
+  <stop offset="0.55" stop-color="#42a5f5"/>
+  <stop offset="1" stop-color="#3381bf"/>
+  </radialGradient>
+  <radialGradient id="lens-facet" cx="0.5" cy="0.45" r="0.72" fx="0.45" fy="0.37">
+  <stop offset="0" stop-color="#70aae3"/>
+  <stop offset="0.55" stop-color="#1976d2"/>
+  <stop offset="1" stop-color="#145ca4"/>
+  </radialGradient>
+  <radialGradient id="spot">
+  <stop offset="0" stop-color="#fff" stop-opacity="0.75"/>
+  <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="cast" x="-30%" y="-30%" width="160%" height="170%">
+  <feGaussianBlur stdDeviation="3"/>
+  </filter>
+  <clipPath id="right">
+  <path d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z"/>
+  </clipPath>
+  <clipPath id="left">
+  <path d="M20.26 12.74A6 6 0 0 1 28.74 12.74L43.76 27.76A6 6 0 0 1 43.76 36.24L28.74 51.26A6 6 0 0 1 20.26 51.26L5.24 36.24A6 6 0 0 1 5.24 27.76Z"/>
+  </clipPath>
+  </defs>
+  <g transform="translate(117.44 40.68) scale(5.08)">
+  <g class="a">
+  <path d="M20.68 19.67A5.4 5.4 0 0 1 28.32 19.67L41.83 33.18A5.4 5.4 0 0 1 41.83 40.82L28.32 54.33A5.4 5.4 0 0 1 20.68 54.33L7.17 40.82A5.4 5.4 0 0 1 7.17 33.18Z" fill="#000" fill-opacity="0.6" filter="url(#cast)"/>
+  <path d="M20.26 12.74A6 6 0 0 1 28.74 12.74L43.76 27.76A6 6 0 0 1 43.76 36.24L28.74 51.26A6 6 0 0 1 20.26 51.26L5.24 36.24A6 6 0 0 1 5.24 27.76Z" fill="url(#lens-a)"/>
+  <ellipse cx="17.5" cy="24" rx="7.5" ry="4" transform="rotate(-45 17.5 24)" fill="url(#spot)" clip-path="url(#left)"/>
+  </g>
+  <path class="b" d="M35.68 19.67A5.4 5.4 0 0 1 43.32 19.67L56.83 33.18A5.4 5.4 0 0 1 56.83 40.82L43.32 54.33A5.4 5.4 0 0 1 35.68 54.33L22.17 40.82A5.4 5.4 0 0 1 22.17 33.18Z" fill="#000" fill-opacity="0.6" filter="url(#cast)"/>
+  <path class="b" d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z" fill="url(#lens-b)"/>
+  <g class="a">
+  <g clip-path="url(#left)">
+  <path class="facet" d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z" fill="url(#lens-facet)"/>
+  </g>
+  </g>
+  <g class="b">
+  <path d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z" fill="none"/>
+  <ellipse cx="32.5" cy="24" rx="7.5" ry="4" transform="rotate(-45 32.5 24)" fill="url(#spot)" clip-path="url(#right)"/>
+  </g>
+  </g>
+</svg>

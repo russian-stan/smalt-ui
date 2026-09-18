@@ -1,0 +1,43 @@
+@use '../../styles/tools';
+.s-field {
+  @include tools.reset-inherited;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-space-1);
+
+  // Square corners: resets the border radius. Field borders (field-shell/segmented-field-control,
+  // SNumberField __control, SPinInput cells) read --s-field-radius, which the descendant control
+  // inherits.
+  &--square {
+    --s-field-radius: 0;
+  }
+
+  // Content-width field: the label/error align with the left edge of the control.
+  &--inline {
+    display: inline-flex;
+    align-items: flex-start;
+  }
+
+  // A regular (non-floating) field label uses normal weight and a smaller size (matching
+  // hint/error) instead of medium/sm from SLabel. The .s-field__label.s-label selector has
+  // specificity (0,2,0), overriding .s-label/.s-label--md; checkbox/switch/radio (own SLabel)
+  // are unaffected.
+  &__label.s-label {
+    font-weight: var(--s-font-weight-normal);
+    font-size: var(--s-font-size-xs);
+  }
+
+  // hint/error are neutral <div>s (not <p>), so host styles for the `p` tag
+  // (e.g. VitePress `.vp-doc p`) do not reach them, and a single class is enough.
+  &__hint {
+    font-size: var(--s-font-size-xs);
+    line-height: var(--s-line-height-normal);
+    color: var(--s-color-text-muted);
+  }
+
+  &__error {
+    font-size: var(--s-font-size-xs);
+    line-height: var(--s-line-height-normal);
+    color: var(--s-color-negative-text);
+  }
+}

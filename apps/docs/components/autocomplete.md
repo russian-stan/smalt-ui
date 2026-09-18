@@ -1,0 +1,216 @@
+<script setup>
+import { ref, computed } from 'vue'
+
+const ALL = [
+  { label: 'New York', value: 'nyc', region: 'New York' },
+  { label: 'Los Angeles', value: 'la', region: 'California' },
+  { label: 'Chicago', value: 'chi', region: 'Illinois' },
+  { label: 'Houston', value: 'hou', region: 'Texas' },
+  { label: 'San Francisco', value: 'sf', region: 'California' },
+]
+
+const query = ref('')
+const city = ref()
+const found = computed(() =>
+  query.value ? ALL.filter((c) => c.label.toLowerCase().includes(query.value.toLowerCase())) : ALL,
+)
+const cityLabel = computed(() => ALL.find((c) => c.value === city.value)?.label)
+
+const richQuery = ref('')
+const richCity = ref()
+const richFound = computed(() =>
+  richQuery.value
+    ? ALL.filter((c) => c.label.toLowerCase().includes(richQuery.value.toLowerCase()))
+    : ALL,
+)
+const richLabel = computed(() => ALL.find((c) => c.value === richCity.value)?.label)
+</script>
+
+# Autocomplete
+
+`SAutocomplete` is an input with suggestions from search results. Unlike
+[`SSelect`](/components/select) with the `searchable` prop, the options come from outside and change
+on every keystroke: the component **does not filter** `options` again, so results of fuzzy search,
+transliteration, and index search get through.
+
+It is built on Reka UI Combobox: `combobox`/`listbox`/`option` roles, keyboard navigation, and a
+portaled panel. The label, hint and error message come from [`SFormField`](/components/form-field).
+
+## Two v-models
+
+The value and the query are separate: `v-model` holds the selected value, `v-model:search` holds
+what the user typed. The app searches by the latter, usually with a debounce.
+
+`v-model:search` receives only typed text: the label of the selected option and the text reset on
+panel close are not written there, so there is no extra request for the label, and the typed text
+does not disappear when the user leaves the field without picking anything. Writing to it from
+outside puts the text into the field — this is how a saved form is restored.
+
+The label of the selected value comes from the `selected-label` prop: after a selection the
+suggestion list is usually empty, so the label cannot be taken from it. While no value is
+selected, `selected-label` does not touch the field text.
+
+The `select` event fires on every suggestion pick, by mouse or keyboard. Unlike
+`update:modelValue`, it also fires when the same suggestion is picked again, so the app can repeat
+a check in a "picked → server rejected → picked again" scenario.
+
+The `Home` and `End` keys stay with the input and move the caret within the text, not through the
+suggestion list. The arrow keys navigate the list.
+
+::: tip Focus inside the component is not leaving the field
+Clicking a suggestion does not fire `blur`: a "left the field without picking" handler would run
+before the selection, and if it changed the list, the item would vanish between mouse down and
+mouse up. `blur` is emitted only when focus leaves the component.
+:::
+
+<Demo>
+  <ClientOnly>
+    <SAutocomplete
+      v-model="city"
+      v-model:search="query"
+      :options="found"
+      :selected-label="cityLabel"
+      label="City"
+      placeholder="Start typing"
+    />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+
+const city = ref()
+const query = ref('')
+const options = ref([])
+const selectedLabel = ref()
+
+const search = useDebounceFn(async (text) => {
+  options.value = await api.searchCities(text)
+}, 300)
+
+watch(query, search)
+</script>
+
+<template>
+  <SAutocomplete
+    v-model="city"
+    v-model:search="query"
+    :options="options"
+    :selected-label="selectedLabel"
+    label="City"
+    placeholder="Start typing"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## Custom option row
+
+The `#option` slot replaces the row content, since a suggestion is rarely a single line of text.
+The `#prepend` slot places an element inside the frame on the left, usually an icon or a country
+flag.
+
+<Demo>
+  <ClientOnly>
+    <SAutocomplete
+      v-model="richCity"
+      v-model:search="richQuery"
+      :options="richFound"
+      :selected-label="richLabel"
+      label="Delivery city"
+      placeholder="Start typing"
+      icon="map-pin"
+    >
+      <template #option="{ option }">
+        <div>
+          <div>{{ option.label }}</div>
+          <div style="font-size: var(--s-font-size-xs); color: var(--s-color-text-muted)">
+            {{ option.region }}
+          </div>
+        </div>
+      </template>
+    </SAutocomplete>
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <SAutocomplete
+    v-model="city"
+    v-model:search="query"
+    :options="options"
+    label="Delivery city"
+    icon="map-pin"
+  >
+    <template #prepend>
+      <CountryFlag :code="country" />
+    </template>
+    <template #option="{ option }">
+      <div>
+        <div>{{ option.label }}</div>
+        <div class="s-text-caption">{{ option.region }}</div>
+      </div>
+    </template>
+  </SAutocomplete>
+</template>
+```
+
+  </template>
+</Demo>
+
+## Loading and empty results
+
+While a request is in flight, `loading` shows an indicator instead of the list. When there are no
+suggestions, the panel shows a placeholder: the `empty-text` prop sets its text, the `#empty` slot
+sets its markup.
+
+<Demo>
+  <ClientOnly>
+    <SAutocomplete
+      :options="[]"
+      loading
+      label="City (searching)"
+      placeholder="Start typing"
+    />
+    <SAutocomplete
+      :options="[]"
+      label="City (nothing found)"
+      empty-text="No matching city"
+      placeholder="Start typing"
+    />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <SAutocomplete
+    :options="options"
+    :loading="pending"
+    empty-text="No matching city"
+    label="City"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## `SSelect` or `SAutocomplete`
+
+| Situation                                                  | Component                   |
+| ---------------------------------------------------------- | --------------------------- |
+| The full list of options is known in advance               | `SSelect`                   |
+| Many options, search over a ready list                     | `SSelect` with `searchable` |
+| Options come from the server and change on every keystroke | `SAutocomplete`             |
+| Fuzzy search, transliteration, or index search is needed   | `SAutocomplete`             |
+
+## API
+
+<ApiTable name="SAutocomplete" />

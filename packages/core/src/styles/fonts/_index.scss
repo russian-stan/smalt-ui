@@ -1,0 +1,9 @@
+// Public SCSS entry for a host that serves the font files itself (`apps/docs/theming.md`).
+// $font-path is absolute from the site root: Sass does not rebase url(), and a relative path
+// would resolve against the host's output CSS. The default '../../fonts/' is correct in both
+// trees: src/styles/fonts → src/fonts and dist/scss/fonts → dist/fonts.
+@use 'faces';
+
+$font-path: '../../fonts/' !default;
+
+@include faces.faces($font-path);

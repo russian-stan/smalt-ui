@@ -1,0 +1,143 @@
+/* VitePress chrome uses its own gray tokens, and the transparent areas of the header show a seam
+   against the Smalt UI page background. :root:root (0,2,0) beats both :root and VitePress .dark. */
+:root:root {
+  --vp-c-bg: var(--s-color-bg);
+  --vp-c-bg-alt: var(--s-color-bg-subtle);
+  --vp-c-bg-elv: var(--s-color-surface);
+  --vp-c-bg-soft: var(--s-color-bg-muted);
+}
+
+/* VitePress accents are bound to Smalt UI semantic tokens: those switch with data-theme (set by
+   Layout.vue), so the accents are right in both themes. brand-1/2 color text (links, inline
+   code), so they take the text role; `--s-color-primary` is a fill and is too dark as text on the
+   dark page. Buttons keep the fill. */
+:root:root {
+  --vp-c-brand-1: var(--s-color-primary-text);
+  --vp-c-brand-2: color-mix(in srgb, var(--s-color-primary-text), var(--s-color-text) 25%);
+  --vp-c-brand-3: var(--s-color-primary);
+  --vp-c-brand-soft: color-mix(in srgb, var(--s-color-primary) 14%, transparent);
+  --vp-c-brand: var(--s-color-primary);
+  --vp-button-brand-bg: var(--s-color-primary);
+  --vp-button-brand-hover-bg: var(--s-color-primary-hover);
+  --vp-button-brand-active-bg: var(--s-color-primary-active);
+}
+
+/* The showcase chrome uses the same fonts as the library, otherwise the typography page would
+   show one thing and describe another. */
+:root:root {
+  --vp-font-family-base: var(--s-font-sans);
+  --vp-font-family-mono: var(--s-font-mono);
+}
+
+.vp-doc :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--s-font-heading);
+}
+
+/* The showcase font size is set on body, not html: the root font-size defines the rem that the
+   library tokens are built on, and demo components would shrink along with it. */
+body {
+  font-size: 15px;
+}
+
+/* Links in text use the regular weight (the theme sets 500).
+   inherit, not 400: a link inside a heading or bold text must keep its weight. */
+.vp-doc a {
+  font-weight: inherit;
+}
+
+/* Previews without `.s-root` set the Smalt UI font explicitly (`.demo__preview` is one). */
+.pg__stage,
+.ts__preview {
+  font-family: var(--s-font-sans);
+}
+
+/* Tables have no zebra stripes; only the header is filled. The selector matches VitePress's, and
+   it wins by order: style.css loads later. */
+.vp-doc tr:nth-child(2n) {
+  background-color: var(--vp-c-bg);
+}
+
+/* A field (`.s-field`) takes half of the preview row. flex-basis is a whole gap less than half and
+   flex-grow takes up the rest: with an exact `calc(50% - 6px)` a fractional preview width pushes
+   the second field onto a new line. `--demo-field-max` on `<Demo>` sets a custom width. */
+.demo__preview > .s-field {
+  flex: 1 1 calc(50% - 12px);
+  max-width: var(--demo-field-max, calc(50% - 6px));
+  min-width: 0;
+}
+/* Narrow screen: the field takes the full row, and the page's max width still applies. */
+@media (max-width: 640px) {
+  .demo__preview > .s-field {
+    flex-basis: 100%;
+    max-width: var(--demo-field-max, 100%);
+  }
+}
+
+.demo__preview > .s-accordion,
+.demo__preview > .s-collapsible {
+  flex-basis: 100%;
+  max-width: var(--demo-block-max, 480px);
+}
+
+.vp-doc .api table {
+  width: 100%;
+}
+.vp-doc .api code {
+  font-size: 0.85em;
+}
+
+/* One scrollbar look in WebKit and Firefox. The thumb color comes from the text token and follows
+   the theme; a transparent border with background-clip leaves a gap around it. */
+:root {
+  --doc-scrollbar-size: 14px;
+  --doc-scrollbar-thumb: color-mix(in srgb, var(--s-color-text) 24%, transparent);
+  --doc-scrollbar-thumb-hover: color-mix(in srgb, var(--s-color-text) 42%, transparent);
+}
+
+/* Firefox: width stays auto; only the thumb/track colors are set (inherited). */
+html {
+  scrollbar-color: var(--doc-scrollbar-thumb) transparent;
+}
+
+/* WebKit (Chrome/Safari/Edge): the ::-webkit-scrollbar declaration is required, otherwise thumb
+   styles do not apply (the browser keeps the native scrollbar). */
+::-webkit-scrollbar {
+  width: var(--doc-scrollbar-size);
+  height: var(--doc-scrollbar-size);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--doc-scrollbar-thumb);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--doc-scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* The VitePress content column (688px) is too narrow for demos, API tables and grid showcases. */
+:root {
+  --vp-layout-max-width: 1600px;
+}
+/* !important: overrides the built-in VitePress .VPDoc(.has-aside) .container/.content-container
+   (same specificity, otherwise their rule wins). */
+.VPDoc.has-aside .container,
+.VPDoc:not(.has-aside) .container {
+  max-width: 1360px !important;
+}
+.VPDoc.has-aside .content-container,
+.VPDoc:not(.has-aside) .content-container {
+  max-width: 1024px !important;
+}
+
+/* The hero canvas (/hero.svg) is wider than tall so the diamonds can slide in from beyond the
+   mark. VitePress caps the image to a square, so lift the width cap: max-height sets the scale. */
+.VPHero .image-container .image-src {
+  max-width: none;
+}

@@ -1,0 +1,49 @@
+@use '../../styles/tools';
+
+.s-context-menu__content {
+  @include tools.reset-inherited;
+  @include tools.floating-surface;
+  z-index: var(--s-z-dropdown);
+  min-width: 12rem;
+  padding: var(--s-space-1);
+  font-size: var(--s-font-size-sm);
+}
+
+.s-context-menu__content--square {
+  border-radius: 0;
+}
+
+.s-context-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-space-2);
+  padding: var(--s-space-2) var(--s-space-3);
+  color: var(--s-color-text);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--s-radius-sm);
+  @include tools.interactive-item;
+
+  &--danger {
+    color: var(--s-color-negative-text);
+    @include tools.state-layer(var(--s-color-negative));
+  }
+}
+
+.s-context-menu__icon {
+  flex-shrink: 0;
+  color: var(--s-color-text-muted);
+}
+
+.s-context-menu__separator {
+  height: 1px;
+  margin: var(--s-space-1) 0;
+  background-color: var(--s-color-border);
+}
+
+.s-context-menu__label {
+  padding: var(--s-space-1) var(--s-space-3);
+  font-size: var(--s-font-size-xs);
+  font-weight: var(--s-font-weight-medium);
+  color: var(--s-color-text-muted);
+}

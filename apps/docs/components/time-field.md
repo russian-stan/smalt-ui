@@ -1,0 +1,237 @@
+# Time Field
+
+`STimeField` is a segmented time input: separate editable parts (hours, minutes, and seconds and
+AM/PM when needed). It works from the keyboard (arrow keys increment), is localized and respects
+the 12/24-hour format. The value is a `Time` (or `CalendarDateTime`/`ZonedDateTime`) from
+`@internationalized/date`; it is built on `SFormField`. The time counterpart of
+[`SDateField`](./date-field). Keep the value in a
+[`shallowRef`](./date-field#value-and-shallowref), not a `ref`: a regular `ref` unwraps the date
+class, and type checking no longer recognizes it as a `DateValue`.
+
+## Basic usage
+
+<script setup>
+import { shallowRef } from 'vue'
+import { Time, parseTime } from '@internationalized/date'
+const time = shallowRef(parseTime('14:30'))
+const empty = shallowRef()
+</script>
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="time" label="Appointment time" />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<script setup>
+import { shallowRef } from 'vue'
+import { parseTime } from '@internationalized/date'
+const time = shallowRef(parseTime('14:30'))
+</script>
+
+<template>
+  <STimeField
+    v-model="time"
+    label="Appointment time"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## 12-hour format and seconds
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="empty" label="12-hour format" :hour-cycle="12" locale="en-US" />
+    <STimeField v-model="empty" label="With seconds" granularity="second" />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <STimeField
+    label="12-hour format"
+    :hour-cycle="12"
+    locale="en-US"
+  />
+  <STimeField
+    label="With seconds"
+    granularity="second"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## Hint and error
+
+`hint` shows helper text below the field, `error` shows an error message and marks the field
+invalid.
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="time" label="Start" hint="24-hour format" :hour-cycle="24" />
+    <STimeField v-model="empty" label="Start" error="Enter a time" />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <STimeField
+    v-model="time"
+    label="Start"
+    hint="24-hour format"
+    :hour-cycle="24"
+  />
+  <STimeField
+    label="Start"
+    error="Enter a time"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## States
+
+`disabled` blocks the field, `readonly` prevents changing the segments, `invalid` marks the field
+invalid (red border), `required` adds `*` to the label.
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="time" label="Disabled" disabled />
+    <STimeField v-model="time" label="Read-only" readonly />
+    <STimeField v-model="time" label="Invalid" invalid />
+    <STimeField v-model="empty" label="Required" required />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <STimeField
+    v-model="time"
+    label="Disabled"
+    disabled
+  />
+  <STimeField
+    v-model="time"
+    label="Read-only"
+    readonly
+  />
+  <STimeField
+    v-model="time"
+    label="Invalid"
+    invalid
+  />
+  <STimeField
+    v-model="empty"
+    label="Required"
+    required
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## Sizes
+
+The `size` prop controls the field height: `sm` (28px), `md` (36px, default) and `lg` (44px).
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="time" label="sm" size="sm" />
+    <STimeField v-model="time" label="md" size="md" />
+    <STimeField v-model="time" label="lg" size="lg" />
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <STimeField
+    v-model="time"
+    label="sm"
+    size="sm"
+  />
+  <STimeField
+    v-model="time"
+    label="md"
+    size="md"
+  />
+  <STimeField
+    v-model="time"
+    label="lg"
+    size="lg"
+  />
+</template>
+```
+
+  </template>
+</Demo>
+
+## `prepend` / `append` slots
+
+The `prepend` and `append` slots put content inside the field border — for example, a clock icon.
+
+<Demo>
+  <ClientOnly>
+    <STimeField v-model="time" label="Leading icon">
+      <template #prepend><SIcon icon="clock" :size="16" /></template>
+    </STimeField>
+    <STimeField v-model="time" label="Trailing icon">
+      <template #append><SIcon icon="clock" :size="16" /></template>
+    </STimeField>
+  </ClientOnly>
+
+<template #code>
+
+```vue
+<template>
+  <STimeField
+    v-model="time"
+    label="Leading icon"
+  >
+    <template #prepend>
+      <SIcon
+        icon="clock"
+        :size="16"
+      />
+    </template>
+  </STimeField>
+
+  <STimeField
+    v-model="time"
+    label="Trailing icon"
+  >
+    <template #append>
+      <SIcon
+        icon="clock"
+        :size="16"
+      />
+    </template>
+  </STimeField>
+</template>
+```
+
+  </template>
+</Demo>
+
+## Leaving the field
+
+The field has `focus` and `blur` events, like [`SInput`](/components/input). Moving between
+segments does not count as leaving — see the details and a validation example on the
+[`SDatePicker` page](/components/date-picker#leaving-the-field).
+
+## API
+
+<ApiTable name="STimeField" />

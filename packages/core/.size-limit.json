@@ -1,0 +1,28 @@
+[
+  {
+    "name": "index: the whole public API",
+    "path": "dist/index.js",
+    "import": "*",
+    "ignore": ["vue", "reka-ui", "lucide", "maska", "maska/vue"],
+    "limit": "40 kB"
+  },
+  {
+    "name": "named import SButton",
+    "path": "dist/index.js",
+    "import": "{ SButton }",
+    "ignore": ["vue", "reka-ui", "lucide", "maska", "maska/vue"],
+    "limit": "13 kB"
+  },
+  {
+    "name": "named import SSelect",
+    "path": "dist/index.js",
+    "import": "{ SSelect }",
+    "ignore": ["vue", "reka-ui", "lucide", "maska", "maska/vue"],
+    "limit": "17 kB"
+  },
+  {
+    "name": "styles.css",
+    "path": "dist/styles.css",
+    "limit": "10 kB"
+  }
+]

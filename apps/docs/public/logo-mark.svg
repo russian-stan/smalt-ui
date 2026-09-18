@@ -1,0 +1,27 @@
+<svg width="59.03" height="44.03" viewBox="2.49 9.99 59.03 44.03" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+  <radialGradient id="lens-a" cx="0.42" cy="0.4" r="0.72" fx="0.37" fy="0.32">
+  <stop offset="0" stop-color="#9fd1f9"/>
+  <stop offset="0.55" stop-color="#64b5f6"/>
+  <stop offset="1" stop-color="#4e8dc0"/>
+  </radialGradient>
+  <radialGradient id="lens-b" cx="0.42" cy="0.4" r="0.72" fx="0.37" fy="0.32">
+  <stop offset="0" stop-color="#70aae3"/>
+  <stop offset="0.55" stop-color="#1976d2"/>
+  <stop offset="1" stop-color="#145ca4"/>
+  </radialGradient>
+  <radialGradient id="lens-facet" cx="0.5" cy="0.45" r="0.72" fx="0.45" fy="0.37">
+  <stop offset="0" stop-color="#698dc5"/>
+  <stop offset="0.55" stop-color="#0d47a1"/>
+  <stop offset="1" stop-color="#0a377e"/>
+  </radialGradient>
+  <clipPath id="left">
+  <path d="M20.26 12.74A6 6 0 0 1 28.74 12.74L43.76 27.76A6 6 0 0 1 43.76 36.24L28.74 51.26A6 6 0 0 1 20.26 51.26L5.24 36.24A6 6 0 0 1 5.24 27.76Z"/>
+  </clipPath>
+  </defs>
+  <path d="M20.26 12.74A6 6 0 0 1 28.74 12.74L43.76 27.76A6 6 0 0 1 43.76 36.24L28.74 51.26A6 6 0 0 1 20.26 51.26L5.24 36.24A6 6 0 0 1 5.24 27.76Z" fill="url(#lens-a)"/>
+  <path d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z" fill="url(#lens-b)"/>
+  <g clip-path="url(#left)">
+  <path d="M35.26 12.74A6 6 0 0 1 43.74 12.74L58.76 27.76A6 6 0 0 1 58.76 36.24L43.74 51.26A6 6 0 0 1 35.26 51.26L20.24 36.24A6 6 0 0 1 20.24 27.76Z" fill="url(#lens-facet)"/>
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@smalt-ui/core": ["../../packages/core/src/index.ts"],
+      "@smalt-ui/core/styles.css": ["../../packages/core/src/styles/index.scss"]
+    }
+  },
+  "include": [".vitepress/**/*.ts", ".vitepress/**/*.vue", ".vitepress/**/*.d.ts"],
+  "exclude": ["node_modules", ".vitepress/dist", ".vitepress/cache"]
+}

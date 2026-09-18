@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    /**
+     * composite/incremental from the base tsconfig.json are off here: with them vue-tsc checks
+     * buildinfo rather than whether the files exist. vite build clears dist before build:types,
+     * and with unchanged inputs no .d.ts files would be emitted at all.
+     */
+    "composite": false,
+    "incremental": false,
+    /**
+     * Node types are only needed by tests and scripts (the main tsconfig.json sees them).
+     * They must not be in the public build: otherwise `process`/`Buffer` in library code would
+     * type-check silently and ship to dist with the .d.ts files.
+     */
+    "types": ["vite/client"]
+  },
+  "include": ["src"],
+  // Tests and the SSR harness are not public API: without this their .d.ts files ship.
+  "exclude": ["src/**/__tests__/**", "src/__ssr__/**"]
+}

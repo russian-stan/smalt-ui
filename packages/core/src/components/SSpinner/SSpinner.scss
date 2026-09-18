@@ -1,0 +1,57 @@
+@use '../../styles/tools';
+@use 'sass:map';
+
+$sizes: (
+  sm: 1rem,
+  md: 1.5rem,
+  lg: 2.5rem,
+);
+
+.s-spinner {
+  @include tools.reset-inherited;
+  display: inline-block;
+  border-style: solid;
+  border-color: currentColor;
+  border-top-color: transparent;
+  border-radius: var(--s-radius-full);
+  animation: s-spinner-rotate 0.6s linear infinite;
+
+  @each $name, $d in $sizes {
+    &--#{$name} {
+      width: $d;
+      height: $d;
+      // Ring thickness (3px/2px) is outside the spacing scale; it is tuned for visual weight.
+      // @if instead of the if() function: it is deprecated in favor of the CSS syntax
+      // if(sass(...)) and warns on every build.
+      @if $name == lg {
+        border-width: 3px;
+      } @else {
+        border-width: 2px;
+      }
+    }
+  }
+
+  &--primary {
+    color: var(--s-spinner-c, var(--s-color-primary));
+  }
+
+  &--neutral {
+    color: var(--s-color-text-muted);
+  }
+
+  &--current {
+    color: currentColor;
+  }
+}
+
+@keyframes s-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-spinner {
+    animation-duration: 1.5s;
+  }
+}

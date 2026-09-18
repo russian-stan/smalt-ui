@@ -1,0 +1,62 @@
+@use 'settings';
+@use 'tools';
+@use 'sass:map';
+
+@layer smalt.utilities {
+  // Page layout utilities: a max-width container and visibility by breakpoint.
+
+  // Container: centers content and keeps it within a readable width. The maximum grows with
+  // breakpoints but is overridden by a single variable, so the app does not need the map.
+  .s-container {
+    width: 100%;
+    max-width: var(--s-container-max-width, 100%);
+    margin-inline: auto;
+    padding-inline: var(--s-container-padding-x, var(--s-space-4));
+  }
+
+  // Full-width container: side padding stays, the maximum is removed.
+  .s-container--fluid {
+    --s-container-max-width: none;
+  }
+
+  @each $bp, $min in settings.$breakpoints {
+    @if $min != 0 {
+      @media (min-width: $min) {
+        .s-container {
+          --s-container-max-width: #{$min};
+        }
+      }
+    }
+  }
+
+  // Hides content visually but keeps it for screen readers: the element stays in the flow and
+  // receives focus. Used to hide a native control under custom markup (a radio inside a card).
+  .s-sr-only {
+    @include tools.visually-hidden;
+  }
+
+  // Visibility utilities only hide and never restore display: there is nothing to restore it
+  // to — display: revert rolls the element back to the browser value and wipes its own
+  // (inline-flex for SButton). "Show only on wide screens" is s-hidden-md-down.
+  .s-hidden {
+    display: none;
+  }
+
+  @each $bp, $min in settings.$breakpoints {
+    @if $min != 0 {
+      // -up: hidden from this breakpoint and wider.
+      @media (min-width: $min) {
+        .s-hidden-#{$bp}-up {
+          display: none;
+        }
+      }
+
+      // -down: hidden below this breakpoint (on narrower screens).
+      @media (max-width: #{$min - 0.02px}) {
+        .s-hidden-#{$bp}-down {
+          display: none;
+        }
+      }
+    }
+  }
+}

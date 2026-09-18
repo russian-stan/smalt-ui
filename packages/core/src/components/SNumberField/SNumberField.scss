@@ -1,0 +1,57 @@
+@use '../../styles/tools';
+
+.s-number-field__control {
+  display: inline-flex;
+  align-items: center;
+  // SFormField is a flex column with align-items: stretch. Without align-self the control
+  // spans the full width (inline-flex has no effect on a flex item), leaving a gap after "+".
+  align-self: flex-start;
+  height: 2.5rem;
+  overflow: hidden;
+  background-color: var(--s-color-surface);
+  border: 1px solid var(--s-color-outline);
+  // Border radius comes from --s-field-radius (the square prop on SFormField zeroes it).
+  border-radius: var(--s-field-radius, var(--s-radius-sm));
+  @include tools.transition(border-color);
+  @include tools.disabled-state;
+
+  &:focus-within {
+    border-color: var(--s-color-primary);
+  }
+}
+
+.s-number-field__input {
+  width: 4rem;
+  height: 100%;
+  padding: 0 var(--s-space-2);
+  font-family: var(--s-font-sans);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+  text-align: center;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &[aria-invalid='true'] {
+    color: var(--s-color-negative-text);
+  }
+}
+
+.s-number-field__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 100%;
+  color: var(--s-color-text-muted);
+  cursor: pointer;
+  background-color: var(--s-color-surface-variant);
+  border: none;
+  @include tools.transition(color);
+  @include tools.state-layer;
+  @include tools.disabled-state;
+
+  &:not(:disabled):hover {
+    color: var(--s-color-text);
+  }
+}

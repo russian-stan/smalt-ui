@@ -1,0 +1,126 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+// The frame and panel follow SSelect geometry: form fields share one visual language.
+.s-autocomplete {
+  &__root {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  &__control {
+    @include tools.field-shell;
+    gap: var(--s-space-2);
+    min-inline-size: 0;
+
+    &--invalid {
+      border-color: var(--s-color-negative);
+    }
+  }
+
+  &__field {
+    flex: 1;
+    min-inline-size: 0;
+    block-size: 100%;
+    padding: 0;
+    font: inherit;
+    color: var(--s-color-text);
+    background: transparent;
+    border: none;
+    outline: none;
+
+    &::placeholder {
+      color: var(--s-color-text-subtle);
+    }
+  }
+
+  // The leading icon doesn't capture clicks, so a tap next to it moves focus into the input.
+  &__icon {
+    flex: none;
+    color: var(--s-color-text-muted);
+    pointer-events: none;
+  }
+
+  &__prepend,
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__spinner {
+    flex: none;
+  }
+
+  &__clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--s-color-text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: var(--s-radius-full);
+    @include tools.transition(color);
+
+    &:hover {
+      color: var(--s-color-text);
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  @each $name in $sizes {
+    &--#{$name} &__control {
+      @include tools.control-size($name);
+    }
+  }
+}
+
+// The suggestion panel is teleported to body, outside the .s-autocomplete block.
+.s-autocomplete__content {
+  @include tools.reset-inherited;
+  @include tools.floating-surface;
+  z-index: var(--s-z-dropdown);
+  min-inline-size: var(--reka-combobox-trigger-width);
+  overflow: hidden;
+
+  &--square {
+    --s-surface-radius: 0;
+  }
+}
+
+// The list scrolls inside the panel: any number of suggestions may arrive, but the panel must
+// not overflow the screen. Reka reports the free space to the window edge; the smaller wins.
+.s-autocomplete__viewport {
+  max-block-size: min(
+    var(--s-autocomplete-max-height, 20rem),
+    var(--reka-combobox-content-available-height, 100vh)
+  );
+  padding: var(--s-space-1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.s-autocomplete__item {
+  @include tools.interactive-item;
+  display: flex;
+  gap: var(--s-space-2);
+  align-items: center;
+  padding: var(--s-space-2) var(--s-space-3);
+  font-size: var(--s-font-size-sm);
+  cursor: pointer;
+  border-radius: var(--s-radius-sm);
+}
+
+.s-autocomplete__status {
+  display: flex;
+  gap: var(--s-space-2);
+  align-items: center;
+  padding: var(--s-space-2) var(--s-space-3);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text-muted);
+}

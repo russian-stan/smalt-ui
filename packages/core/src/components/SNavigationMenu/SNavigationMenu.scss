@@ -1,0 +1,113 @@
+@use '../../styles/tools';
+
+.s-navigation-menu {
+  @include tools.reset-inherited;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+
+  // The doubled selector `& &__el` = (0,2,0) overrides host typography
+  // (e.g. VitePress `.vp-doc ul`/`a` = (0,1,1)) without !important.
+  & &__list {
+    display: flex;
+    gap: var(--s-space-1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  & &__trigger,
+  & &__top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-space-1);
+    padding: var(--s-space-2) var(--s-space-3);
+    font-family: var(--s-font-sans);
+    color: var(--s-color-text);
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: var(--s-radius-sm);
+    @include tools.typescale('label-lg');
+    @include tools.transition(color);
+    @include tools.state-layer;
+  }
+
+  &__chevron {
+    color: var(--s-color-text-muted);
+    @include tools.transition(transform);
+  }
+
+  &__trigger[data-state='open'] &__chevron {
+    transform: rotate(180deg);
+  }
+
+  &__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    // width:auto (shrink-to-fit) gives the panel its intrinsic width. width:100% here is
+    // circular with the viewport width and collapses the panel to zero.
+    width: auto;
+  }
+
+  & &__panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(12rem, 1fr));
+    gap: var(--s-space-1);
+    padding: var(--s-space-2);
+    margin: 0;
+    list-style: none;
+  }
+
+  & &__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-space-1);
+    padding: var(--s-space-3);
+    color: var(--s-color-text);
+    text-decoration: none;
+    border-radius: var(--s-radius-sm);
+    @include tools.state-layer;
+  }
+
+  &__link-title {
+    font-weight: var(--s-font-weight-medium);
+  }
+
+  &__link-desc {
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+
+  &__viewport-wrap {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    // The panel is wider than the narrow nav, so it is pulled to the start of the row: with
+    // center it goes past the left edge.
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  &__viewport {
+    position: relative;
+    // Height/width come from Reka (it measures the active panel). Without height the viewport
+    // collapses (the `__content` panel is position:absolute), and overflow:hidden clips it to
+    // zero. flex:none, otherwise as a flex child of __viewport-wrap it shrinks to the nav row
+    // width.
+    flex: none;
+    width: var(--reka-navigation-menu-viewport-width);
+    height: var(--reka-navigation-menu-viewport-height);
+    margin-top: var(--s-space-1);
+    overflow: hidden;
+    @include tools.transition(width, height);
+    @include tools.floating-surface;
+
+    &--square {
+      --s-surface-radius: 0;
+    }
+  }
+}

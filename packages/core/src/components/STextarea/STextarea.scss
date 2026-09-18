@@ -1,0 +1,97 @@
+@use 'sass:map';
+@use '../../styles/tools';
+
+// Height comes from rows/resize, so control-size does not fit: this map changes only the font
+// and padding, so the field follows density presets just like SInput.
+$sizes: (
+  sm: (
+    font: xs,
+    pad: 2,
+  ),
+  md: (
+    font: sm,
+    pad: 3,
+  ),
+  lg: (
+    font: base,
+    pad: 4,
+  ),
+);
+
+.s-textarea {
+  &__wrap {
+    @include tools.field-shell;
+    align-items: flex-start;
+    gap: var(--s-space-2);
+    font-size: var(--s-font-size-sm);
+    // Own frame (not control-size): exposes the horizontal padding for the floating label.
+    --s-field-pad-x: var(--s-space-3);
+    // The field is multi-line: the resting label sits at the first line, not the frame's center.
+    --s-field-label-rest-y: calc(var(--s-space-2) + 0.5rem);
+    padding: var(--s-space-2) var(--s-field-pad-x);
+  }
+
+  @each $name, $cfg in $sizes {
+    &--#{$name} &__wrap {
+      font-size: var(--s-font-size-#{map.get($cfg, font)});
+      --s-field-pad-x: var(--s-space-#{map.get($cfg, pad)});
+    }
+  }
+
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  &__wrap--has-leading {
+    --s-field-label-x: calc(var(--s-field-pad-x) + 1.5rem);
+  }
+
+  &__wrap--floating &__field::placeholder {
+    color: transparent;
+  }
+
+  &__wrap--floating:focus-within &__field::placeholder {
+    color: var(--s-color-text-subtle);
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+    // Minimum height: resizing (resize: vertical) respects min-height and cannot "squash" the
+    // field below a sensible minimum (~2 lines + room for the floating label).
+    min-height: 3rem;
+    padding: 0;
+    font: inherit;
+    color: var(--s-color-text);
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: vertical;
+
+    &::placeholder {
+      color: var(--s-color-text-subtle);
+    }
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  // append is an absolute overlay in the top right corner: in the flex flow it would shrink the
+  // textarea and move the native resize grip out of the frame's bottom right corner.
+  &__append {
+    @include tools.field-affix;
+    position: absolute;
+    inset-block-start: var(--s-space-2);
+    inset-inline-end: var(--s-space-3);
+  }
+
+  // Reserves room on the right for append so the text does not run under the adornment.
+  &__wrap--has-append &__field {
+    padding-inline-end: var(--s-space-10);
+  }
+}

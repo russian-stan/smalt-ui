@@ -1,0 +1,19 @@
+@use '../../styles/tools';
+
+.s-popover__content {
+  @include tools.reset-inherited;
+  @include tools.floating-surface;
+  z-index: var(--s-z-popover);
+  max-width: 20rem;
+  padding: var(--s-space-4);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+}
+
+.s-popover__content--square {
+  border-radius: 0;
+}
+
+.s-popover__arrow {
+  @include tools.floating-arrow;
+}

@@ -1,0 +1,205 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+.s-input {
+  &__wrap {
+    @include tools.field-shell;
+    gap: var(--s-space-2);
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    font: inherit;
+    color: var(--s-color-text);
+    background: transparent;
+    border: none;
+    outline: none;
+
+    &::placeholder {
+      color: var(--s-color-text-subtle);
+    }
+  }
+
+  // fill-mask: container for the input + ghost overlay (positions the rest of the template).
+  &__field-box {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  // The input inside the container sits above the "ghost".
+  &__field-box &__field {
+    position: relative;
+    z-index: 1;
+  }
+
+  // "Ghost" layer: an invisible prefix (the width of the typed text) + the visible template tail.
+  // Aligned with the input text: same font, starts at 0, vertically centered, spaces preserved.
+  &__ghost {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    font: inherit;
+    white-space: pre;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &__ghost-fill {
+    color: transparent;
+  }
+
+  &__ghost-tail {
+    color: var(--s-color-text-subtle);
+  }
+
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  &__wrap--has-leading {
+    @include tools.field-label-leading;
+  }
+
+  // With a floating label the native placeholder is hidden at rest (the label stands in for it)
+  // and shows only on focus.
+  &__wrap--floating &__field::placeholder {
+    color: transparent;
+  }
+
+  &__wrap--floating:focus-within &__field::placeholder {
+    color: var(--s-color-text-subtle);
+  }
+
+  // Adornment icons (icon/iconRight) do not capture clicks, so focus goes to the field.
+  &__icon {
+    flex: none;
+    color: var(--s-color-text-muted);
+    pointer-events: none;
+  }
+
+  // Text prefix/suffix (unit of measure) does not capture clicks, so a tap next to the unit
+  // focuses the field instead of doing nothing.
+  &__affix {
+    flex: none;
+    color: var(--s-color-text-muted);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__affix + &__clear {
+    margin-inline-start: calc(var(--s-space-1) * -1);
+  }
+
+  &__clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: var(--s-color-text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: var(--s-radius-full);
+    @include tools.transition(color);
+
+    &:hover {
+      color: var(--s-color-text);
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  // Frame height, horizontal padding and font size come from control-size (input inherits font).
+  @each $name in $sizes {
+    &--#{$name} &__wrap {
+      @include tools.control-size($name);
+    }
+  }
+
+  // Tags mode (use-tags): the frame grows in height and chips wrap.
+  &__control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-space-2);
+    align-items: center;
+    padding: var(--s-space-1) var(--s-space-2);
+    background-color: var(--s-color-surface);
+    border: 1px solid var(--s-color-outline);
+    border-radius: var(--s-radius-sm);
+    @include tools.transition(border-color);
+    @include tools.disabled-state;
+
+    &:focus-within {
+      border-color: var(--s-color-primary);
+    }
+
+    &--invalid {
+      border-color: var(--s-color-negative);
+    }
+  }
+
+  // The leading icon in tags mode does not capture clicks.
+  &__leading {
+    display: inline-flex;
+    align-items: center;
+    color: var(--s-color-text-muted);
+    pointer-events: none;
+  }
+
+  &__tags-field {
+    flex: 1;
+    min-width: 6rem;
+    height: 1.75rem;
+    font: inherit;
+    color: var(--s-color-text);
+    background: transparent;
+    border: none;
+    outline: none;
+
+    &::placeholder {
+      color: var(--s-color-text-subtle);
+    }
+  }
+
+  // Minimum height and font size of the tags frame follow the size (the same tokens control-size
+  // gives a regular field; the field and placeholder inherit the frame's font-size).
+  &--sm &__control {
+    min-height: 2rem;
+    font-size: var(--s-font-size-sm);
+  }
+
+  &--md &__control {
+    min-height: 2.5rem;
+    font-size: var(--s-font-size-sm);
+  }
+
+  &--lg &__control {
+    min-height: 3rem;
+    font-size: var(--s-font-size-base);
+  }
+}

@@ -1,0 +1,101 @@
+// Typography utility classes (.s-text-*) — the library's only set of global utilities besides
+// normalize/.s-root. Emitted to dist/styles.css, available without the wrapper.
+// Values come from tokens (var(--s-*)), scale roles from the settings.$typography map.
+@use 'sass:map';
+@use 'settings';
+
+@layer smalt.utilities {
+  // --- Scale roles: h1..h6 / subtitle1-2 / body1-2 / caption / overline --------------
+  // Expands each role object ($cfg) into four properties via var(--s-*),
+  // like the tools.typescale mixin, but from the public $typography map.
+  @each $role, $cfg in settings.$typography {
+    .s-text-#{$role} {
+      font-size: var(--s-font-size-#{map.get($cfg, size)});
+      font-weight: var(--s-font-weight-#{map.get($cfg, weight)});
+      line-height: var(--s-line-height-#{map.get($cfg, leading)});
+      letter-spacing: map.get($cfg, tracking);
+    }
+  }
+
+  // Heading roles use the display font. A separate rule rather than a key in the $typography
+  // map: the map is public (`!default`) and the host overrides it whole per role, so a new
+  // field in its objects would be silently lost on the first override.
+  .s-text-h1,
+  .s-text-h2,
+  .s-text-h3,
+  .s-text-h4,
+  .s-text-h5,
+  .s-text-h6 {
+    font-family: var(--s-font-heading);
+  }
+
+  // overline is uppercase (the wide tracking is already in the role).
+  .s-text-overline {
+    text-transform: uppercase;
+  }
+
+  // --- Weight: .s-text-weight-<key> from the $font-weight map -----------------------
+  @each $key, $value in settings.$font-weight {
+    .s-text-weight-#{$key} {
+      font-weight: var(--s-font-weight-#{$key});
+    }
+  }
+
+  // --- Alignment --------------------------------------------------------------------
+  .s-text-left {
+    text-align: left;
+  }
+  .s-text-right {
+    text-align: right;
+  }
+  .s-text-center {
+    text-align: center;
+  }
+  .s-text-justify {
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  // --- Transform and decoration -----------------------------------------------------
+  .s-text-uppercase {
+    text-transform: uppercase;
+  }
+  .s-text-lowercase {
+    text-transform: lowercase;
+  }
+  .s-text-capitalize {
+    text-transform: capitalize;
+  }
+  .s-text-italic {
+    font-style: italic;
+  }
+  .s-text-no-wrap {
+    white-space: nowrap;
+  }
+  .s-text-strike {
+    text-decoration: line-through;
+  }
+
+  // --- Truncation -------------------------------------------------------------------
+  // Single line: overflow + ellipsis + nowrap.
+  .s-text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Multi-line truncation via line-clamp (2/3 lines). -webkit-* is the de facto standard,
+  // supported by all target browsers; display:-webkit-box is required for the clamp.
+  .s-text-truncate-2,
+  .s-text-truncate-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .s-text-truncate-2 {
+    -webkit-line-clamp: 2;
+  }
+  .s-text-truncate-3 {
+    -webkit-line-clamp: 3;
+  }
+}

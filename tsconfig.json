@@ -1,0 +1,10 @@
+{
+  "files": [],
+  /**
+   * references: only @smalt-ui/core (composite solution build via `tsc -b`).
+   * @smalt-ui/nuxt is intentionally left out: its tsconfig is not composite and extends the
+   * Nuxt-generated `.nuxt/tsconfig.json`, so the module is type-checked through Nuxt tooling
+   * (`pnpm -r typecheck`), not through the root solution build.
+   */
+  "references": [{ "path": "./packages/core" }]
+}

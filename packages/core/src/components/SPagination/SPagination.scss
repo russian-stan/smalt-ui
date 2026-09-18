@@ -1,0 +1,24 @@
+@use '../../styles/tools';
+.s-pagination {
+  @include tools.reset-inherited;
+  display: inline-block;
+
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: var(--s-space-1);
+  }
+
+  &__page {
+    min-width: 2rem;
+  }
+
+  &__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    color: var(--s-color-text-muted);
+  }
+}

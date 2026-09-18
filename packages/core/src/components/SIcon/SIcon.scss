@@ -1,0 +1,8 @@
+@use '../../styles/tools';
+
+.s-icon {
+  @include tools.reset-inherited;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}

@@ -1,0 +1,37 @@
+// Color utility classes (.s-text-*/.s-bg-*). Values go through var(--s-*), so the classes
+// follow the theme and brand token overrides.
+@use 'settings';
+
+@layer smalt.utilities {
+  @mixin color-pair($name) {
+    .s-text-#{$name} {
+      color: var(--s-#{$name});
+    }
+    .s-bg-#{$name} {
+      background-color: var(--s-#{$name});
+    }
+  }
+
+  // Brand colors: --s-primary … --s-dark-page.
+  @each $name, $_ in settings.$brand-colors {
+    @include color-pair($name);
+  }
+
+  // Material families: base (--s-red) + variants (--s-red-1..14).
+  @each $family, $scale in settings.$material {
+    @include color-pair($family);
+    @each $stop, $_ in $scale {
+      @include color-pair('#{$family}-#{$stop}');
+    }
+  }
+
+  // Neutral gray (50–950) and brand (the primary color scale).
+  @each $palette, $scale in settings.$palettes {
+    @each $stop, $_ in $scale {
+      @include color-pair('#{$palette}-#{$stop}');
+    }
+  }
+
+  @include color-pair('white');
+  @include color-pair('black');
+}

@@ -1,0 +1,126 @@
+{
+  "name": "@smalt-ui/core",
+  "version": "1.0.0",
+  "description": "UI library for Vue 3 and Nuxt built on Reka UI and design tokens",
+  "license": "MIT",
+  "author": "Stanislav Dyachenko",
+  "homepage": "https://technical-jade.github.io/smalt-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/technical-jade/smalt-ui.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/technical-jade/smalt-ui/issues"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "ui",
+    "components",
+    "component-library",
+    "design-system",
+    "reka-ui",
+    "typescript"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons.d.ts",
+      "import": "./dist/icons.js"
+    },
+    "./resolver": {
+      "types": "./dist/resolver.d.ts",
+      "import": "./dist/resolver.js"
+    },
+    "./labs": {
+      "types": "./dist/labs/index.d.ts",
+      "import": "./dist/labs/index.js"
+    },
+    "./color-mode-script": {
+      "types": "./dist/color-mode-script.d.ts",
+      "import": "./dist/color-mode-script.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./fonts.css": "./dist/fonts.css",
+    "./fonts/*": "./dist/fonts/*",
+    "./scss/*": "./dist/scss/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "gen:names": "node scripts/gen-component-names.mjs",
+    "prebuild": "pnpm gen:names",
+    "build": "vite build && pnpm build:types && pnpm build:styles",
+    "build:types": "vue-tsc -p tsconfig.build.json && node scripts/fix-dts-specifiers.mjs",
+    "build:styles": "sass src/styles/index.scss dist/styles.css --no-source-map --style=expanded && sass src/styles/fonts/_bundled.scss dist/fonts.css --no-source-map --style=expanded && node scripts/copy-scss.mjs && node scripts/copy-fonts.mjs",
+    "test": "vitest run --project unit",
+    "test:browser": "vitest run --project browser",
+    "test:all": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:types": "vitest run --project types",
+    "test:ssr": "vitest run src/__ssr__",
+    "size": "size-limit",
+    "lint:pkg": "publint --strict && attw --pack --profile esm-only --entrypoints . ./icons ./resolver ./labs ./color-mode-script",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@internationalized/date": "^3.5.0",
+    "reka-ui": "^2.10.0",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@internationalized/date": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@internationalized/date": "^3.12.2",
+    "@size-limit/esbuild": "^13.0.3",
+    "@size-limit/file": "^13.0.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/vue": "^8.1.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/browser": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@vue/test-utils": "^2.4.11",
+    "axe-core": "^4.12.1",
+    "happy-dom": "^20.10.6",
+    "playwright": "^1.62.1",
+    "publint": "^0.3.23",
+    "reka-ui": "^2.10.1",
+    "sass": "^1.101.0",
+    "size-limit": "^13.0.3",
+    "vite": "^8.1.4",
+    "vite-plugin-lib-inject-css": "^2.2.2",
+    "vitest": "^4.1.10",
+    "vitest-axe": "^0.1.0",
+    "vue": "^3.5.39"
+  },
+  "dependencies": {
+    "lucide": "^1.24.0",
+    "maska": "^3.1.1"
+  }
+}

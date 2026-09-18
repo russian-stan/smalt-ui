@@ -1,0 +1,62 @@
+@use '../../styles/tools';
+
+.s-tree {
+  @include tools.reset-inherited;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--s-space-2);
+    padding-block: var(--s-space-1);
+    padding-inline-end: var(--s-space-2);
+    border-radius: var(--s-radius-md);
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    @include tools.interactive-item;
+    @include tools.disabled-state;
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+
+    &[data-selected],
+    &[aria-selected='true'] {
+      color: var(--s-color-primary-text);
+      background: var(--s-color-primary-container);
+      font-weight: var(--s-font-weight-medium);
+    }
+  }
+
+  &__chevron,
+  &__spacer {
+    flex-shrink: 0;
+    inline-size: var(--s-space-4);
+    block-size: var(--s-space-4);
+  }
+
+  &__chevron {
+    color: var(--s-color-text-muted);
+    @include tools.transition(transform);
+
+    &--expanded {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: var(--s-color-text-muted);
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

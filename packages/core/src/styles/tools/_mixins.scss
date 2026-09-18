@@ -1,0 +1,464 @@
+@use 'sass:map';
+@use 'sass:list';
+@use '../settings';
+
+// Generates CSS variables from a map: --<prefix>-<key>: <value>.
+@mixin emit-vars($map, $prefix: 's') {
+  @each $name, $value in $map {
+    --#{$prefix}-#{$name}: #{$value};
+  }
+}
+
+// Generates palette variables: --s-<palette>-<stop>: <value>.
+@mixin emit-palettes($palettes) {
+  @each $name, $scale in $palettes {
+    @each $stop, $value in $scale {
+      --s-#{$name}-#{$stop}: #{$value};
+    }
+  }
+}
+
+// Material Design palette: like emit-palettes, plus the base color without a suffix
+// (--s-<family>) = variant 6. Produces the tokens --s-red and --s-red-1..14.
+@mixin emit-material($palettes) {
+  @each $name, $scale in $palettes {
+    --s-#{$name}: #{map.get($scale, 6)};
+    @each $stop, $value in $scale {
+      --s-#{$name}-#{$stop}: #{$value};
+    }
+  }
+}
+
+// Resets inherited properties on a component root — the core of host→lib isolation: the host's
+// typography (uppercase/letter-spacing/italic/…) is inherited into the component regardless of
+// specificity and layers. Included as the FIRST line of the root so typescale/control-size below
+// override the reset. `direction` and `color` are left alone: RTL comes from the host, the color
+// is set by the component. Bare declarations only — a nested rule triggers Sass "mixed
+// declarations". box-sizing on the root is needed with `$reset: false`. `$typography: false` is
+// for a root with its own line-height/letter-spacing.
+@mixin reset-inherited($typography: true) {
+  box-sizing: border-box;
+  font-family: var(--s-font-sans);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-align: start;
+  word-spacing: normal;
+  text-indent: 0;
+  @if $typography {
+    letter-spacing: normal;
+    line-height: var(--s-line-height-normal);
+  }
+}
+
+// Focus ring on semantic tokens.
+@mixin focus-ring {
+  outline: var(--s-focus-ring-width) solid var(--s-color-focus-ring);
+  outline-offset: var(--s-focus-ring-offset);
+}
+
+// Focus ring on the container wrapper (for composite fields: combobox/tags/pin).
+@mixin focus-within-ring {
+  &:focus-within {
+    @include focus-ring;
+  }
+}
+
+// Media query from a breakpoint (min-width, mobile-first). For xs (0) the content is unwrapped.
+@mixin respond-to($bp) {
+  $min: map.get(settings.$breakpoints, $bp);
+  @if $min == 0 {
+    @content;
+  } @else {
+    @media (min-width: $min) {
+      @content;
+    }
+  }
+}
+
+// Hides visually while keeping it available to screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Shared disabled state (MD: 38% opacity). Covers the native `:disabled` and the Reka
+// `[data-disabled]` attribute.
+@mixin disabled-state {
+  &:disabled,
+  &[data-disabled] {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+}
+
+// Transition for a list of properties with the shared duration/easing.
+@mixin transition($props...) {
+  $parts: ();
+  @each $p in $props {
+    $parts: list.append($parts, #{$p} var(--s-duration-fast) var(--s-ease-standard), comma);
+  }
+  transition: $parts;
+}
+
+// MD state layer (no ripple): a translucent state layer over the surface.
+// Implemented via background-image (painted over background-color but under the content),
+// so it works for any child structure and needs no wrappers.
+// $color is the "on" color of the layer (defaults to text = on-surface).
+// The layer switches instantly: background-image (a gradient) does not interpolate, and the
+// component's base transition handles smooth color/shadow changes.
+@mixin state-layer($color: var(--s-color-text)) {
+  &:not(:disabled):not([data-disabled]):hover,
+  &[data-highlighted] {
+    background-image: linear-gradient(
+      color-mix(in srgb, #{$color} 8%, transparent),
+      color-mix(in srgb, #{$color} 8%, transparent)
+    );
+  }
+
+  &:not(:disabled):not([data-disabled]):active {
+    background-image: linear-gradient(
+      color-mix(in srgb, #{$color} 12%, transparent),
+      color-mix(in srgb, #{$color} 12%, transparent)
+    );
+  }
+}
+
+// Interactive control size from the shared $control-sizes map.
+// The horizontal padding is exposed as --s-field-pad-x so the floating label
+// (floating-label) can align with the start of the field text without knowing the size.
+@mixin control-size($name) {
+  $cfg: map.get(settings.$control-sizes, $name);
+  height: map.get($cfg, height);
+  --s-field-pad-x: var(--s-space-#{map.get($cfg, pad)});
+  padding: 0 var(--s-field-pad-x);
+  font-size: var(--s-font-size-#{map.get($cfg, font)});
+}
+
+// MD typography role from the $typescale map.
+@mixin typescale($role) {
+  $cfg: map.get(settings.$typescale, $role);
+  font-size: var(--s-font-size-#{map.get($cfg, size)});
+  font-weight: var(--s-font-weight-#{map.get($cfg, weight)});
+  line-height: var(--s-line-height-#{map.get($cfg, leading)});
+  letter-spacing: map.get($cfg, tracking);
+}
+
+// Floating surface (overlays: dropdown/popover/hovercard/dialog/toast/…).
+@mixin floating-surface {
+  background-color: var(--s-color-surface);
+  border: 1px solid var(--s-color-border);
+  // Radius via a variable: a component with the square prop zeroes it on its panel
+  // without rewriting the mixin rule.
+  border-radius: var(--s-surface-radius, var(--s-radius-md));
+  // Shadow the same way: the flat/elevation props set the variable inline on the panel.
+  box-shadow: var(--s-surface-elevation, var(--s-elevation-3));
+}
+
+// Floating surface arrow. Reka draws it as the open path "M0 0 L6 6 L12 0": the stroke covers
+// only the sides and continues the panel border. Without a stroke the arrow blends into the
+// background. Reka places the base outside the border; a 1px shift toward the panel (in svg
+// coordinates, the wrapper rotates it per side) lets the fill cover the border under the base.
+// overflow: visible because half of the stroke lies outside the viewBox.
+@mixin floating-arrow {
+  overflow: visible;
+  transform: translateY(-1px);
+  fill: var(--s-color-surface);
+  stroke: var(--s-color-border);
+  stroke-width: 1px;
+}
+
+// Interactive list/menu item: MD state layer + disabled state.
+@mixin interactive-item {
+  @include state-layer;
+  @include disabled-state;
+  outline: none;
+}
+
+// Field shell (MD outlined): a flex row, border/radius/background, focus/disabled/invalid.
+// The inner control is borderless + flex:1; adornments and prepend/append are flex children.
+// invalid goes through the `&--invalid` modifier class on the wrapper (aria-invalid stays on
+// the control).
+@mixin field-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  font-family: var(--s-font-sans);
+  color: var(--s-color-text);
+  background-color: var(--s-color-surface);
+  border: 1px solid var(--s-color-outline);
+  // Shell radius via --s-field-radius (the square prop on the field root zeroes it).
+  border-radius: var(--s-field-radius, var(--s-radius-sm));
+  // The floating label starts at the field's horizontal padding by default;
+  // a field with a leading icon overrides it with a larger offset.
+  --s-field-label-x: var(--s-field-pad-x);
+  @include transition(border-color, box-shadow);
+  @include disabled-state;
+
+  &:focus-within {
+    border-color: var(--s-color-primary);
+  }
+
+  // Fields with a plain div wrapper (SInput/STextarea) get disabled via a modifier
+  // (Reka fields' wrappers get [data-disabled] themselves, covered by disabled-state above).
+  &--disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+
+  &--invalid {
+    border-color: var(--s-color-negative);
+  }
+}
+
+// prepend/append slot wrapper: a non-shrinking flex item at the field edge.
+// The edge offset (padding-inline-start/end) is added by the specific prepend/append.
+@mixin field-affix {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  color: var(--s-color-text-muted);
+}
+
+// Floating label (notched outline): a direct child of the field shell (position: relative).
+// Floats up when the shell is focused or filled ([data-filled]) and "cuts" the border with the
+// surface background. State is read from the parent shell, so the mixin is not tied to a field's
+// BEM class.
+@mixin floating-label {
+  position: absolute;
+  // Resting vertical position: centered (--s-field-label-rest-y defaults to 50%); multi-line
+  // fields (textarea) override the variable to "at the first line".
+  inset-block-start: var(--s-field-label-rest-y, 50%);
+  inset-inline-start: var(--s-field-label-x, var(--s-field-pad-x, 0));
+  max-inline-size: calc(100% - var(--s-field-label-x, 0) - var(--s-field-pad-x, 0));
+  overflow: hidden;
+  color: var(--s-color-text-muted);
+  // At rest the label matches the input text size (--s-font-size-sm) and is fixed, independent
+  // of the field size; when floated it shrinks via scale (below).
+  font-size: var(--s-font-size-sm);
+  font-weight: var(--s-font-weight-normal);
+  line-height: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background-color: transparent;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  pointer-events: none;
+  @include transition(
+    transform,
+    inset-block-start,
+    inset-inline-start,
+    padding,
+    color,
+    background-color
+  );
+
+  :where(:focus-within, [data-filled]) > & {
+    inset-block-start: 0;
+    inset-inline-start: calc(var(--s-field-pad-x, 0) - 0.25rem);
+    padding-inline: 0.25rem;
+    background-color: var(--s-color-surface);
+    transform: translateY(-50%) scale(0.75);
+  }
+
+  // Color when floated: focus → primary; invalid → danger (wins by order).
+  // Invalid state is read from both data-invalid (field-shell fields) and aria-invalid
+  // (segmented roots).
+  :where(:focus-within) > & {
+    color: var(--s-color-primary-text);
+  }
+  :where([data-invalid], [aria-invalid='true']) > & {
+    color: var(--s-color-negative-text);
+  }
+}
+
+// A leading icon/prepend shifts the resting floating label past it (16px icon + --s-space-2 gap).
+@mixin field-label-leading {
+  --s-field-label-x: calc(var(--s-field-pad-x) + 1.5rem);
+}
+
+// Checkerboard under transparent colors. The 8px/4px tile geometry belongs to the pattern, not to
+// the spacing scale.
+@mixin checkerboard {
+  background-image:
+    linear-gradient(45deg, var(--s-color-border) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--s-color-border) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--s-color-border) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--s-color-border) 75%);
+  background-size: 8px 8px;
+  background-position:
+    0 0,
+    0 4px,
+    4px -4px,
+    -4px 0;
+}
+
+// Shell of a segmented date/time field (MD outlined).
+@mixin segmented-field-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  inline-size: 100%;
+  font-family: var(--s-font-sans);
+  color: var(--s-color-text);
+  background-color: var(--s-color-surface);
+  border: 1px solid var(--s-color-outline);
+  border-radius: var(--s-field-radius, var(--s-radius-sm));
+  @include transition(border-color, box-shadow);
+  @include disabled-state;
+
+  &:focus-within {
+    border-color: var(--s-color-primary);
+  }
+
+  // Keyed on the attribute, not the --invalid class as in field-shell: the root here is a Reka
+  // group with aria-invalid, while in field-shell the attribute sits on the inner input.
+  &[aria-invalid='true'] {
+    border-color: var(--s-color-negative);
+  }
+}
+
+// A single editable segment (day/hour/…). `$literalSelector` is the separator literal class.
+@mixin segmented-field-segment($literalSelector: '&--literal') {
+  padding-inline: 1px;
+  border-radius: var(--s-radius-sm);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+  @include state-layer(var(--s-color-primary));
+
+  &:focus {
+    color: var(--s-color-primary-contrast);
+    background: var(--s-color-primary);
+  }
+
+  &[data-placeholder] {
+    color: var(--s-color-text-muted);
+  }
+
+  #{$literalSelector} {
+    padding-inline: 0;
+    color: var(--s-color-text-muted);
+
+    &:focus {
+      color: inherit;
+      background: transparent;
+    }
+  }
+}
+
+// Resting segmented field (empty, unfocused): placeholder segments are hidden and the label
+// stands in for them; they show on focus or once filled. Include at the block root: it relies on
+// the block's `__wrap` and `__segment` elements.
+@mixin segmented-field-resting-segments {
+  &__wrap--floating:not(:focus-within):not([data-filled]) &__segment {
+    color: transparent;
+  }
+}
+
+// Resistance to host table styles (e.g. `.vp-doc th/td` = (0,1,1)): drops borders and background
+// and re-centers the weekday labels the host shifts left via `th`. Include on the grid inside
+// `__content`, where the selector reaches (0,2,0) and wins.
+@mixin calendar-table-reset {
+  :where(table, thead, tbody, tr, th, td) {
+    background: none;
+    border: 0;
+    text-align: center;
+  }
+}
+
+// Month navigation button (left/right chevron).
+@mixin calendar-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--s-color-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--s-radius-full);
+  cursor: pointer;
+  @include state-layer;
+  @include disabled-state;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// "Month Year" heading.
+@mixin calendar-heading {
+  font-family: var(--s-font-heading);
+  font-size: var(--s-font-size-sm);
+  font-weight: var(--s-font-weight-medium);
+  text-transform: capitalize;
+}
+
+// Weekday label cell.
+@mixin calendar-weekday {
+  padding-block: var(--s-space-1);
+  font-size: var(--s-font-size-xs);
+  font-weight: var(--s-font-weight-medium);
+  color: var(--s-color-text-muted);
+  text-transform: capitalize;
+}
+
+// Day button: today/selected/outside/disabled/unavailable via Reka data attributes.
+@mixin calendar-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--s-radius-full);
+  cursor: pointer;
+  @include state-layer(var(--s-color-primary));
+  @include transition(background-color, color);
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &[data-today] {
+    font-weight: var(--s-font-weight-semibold);
+    color: var(--s-color-primary-text);
+  }
+
+  &[data-selected] {
+    color: var(--s-color-primary-contrast);
+    background: var(--s-color-primary);
+  }
+
+  // Days of adjacent months are clickable, so they are regular text: they are muted with
+  // --s-color-text-muted, which passes contrast, not -subtle. The selected day is excluded
+  // explicitly: the rule comes after [data-selected] with equal specificity and would otherwise
+  // recolor the digit on the fill, and the month's end is visible in both its own and the
+  // adjacent month.
+  &[data-outside-view]:not([data-selected]),
+  &[data-outside-visible-view]:not([data-selected]) {
+    color: var(--s-color-text-muted);
+  }
+
+  &[data-disabled],
+  &[data-unavailable] {
+    color: var(--s-color-text-subtle);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &[data-unavailable] {
+    text-decoration: line-through;
+  }
+}

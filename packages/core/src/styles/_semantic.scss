@@ -1,0 +1,20 @@
+// Level 2 — SEMANTIC tokens. Light theme by default; dark is defined twice — by an explicit
+// data-theme and by the media fallback, both blocks emitted by emit-vars($semantic-dark).
+@use 'settings';
+@use 'tools';
+
+@layer smalt.tokens {
+  :root {
+    @include tools.emit-vars(settings.$semantic-light);
+  }
+
+  :root[data-theme='dark'] {
+    @include tools.emit-vars(settings.$semantic-dark);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      @include tools.emit-vars(settings.$semantic-dark);
+    }
+  }
+}

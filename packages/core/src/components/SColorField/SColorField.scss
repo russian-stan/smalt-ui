@@ -1,0 +1,72 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+.s-color-field {
+  &__control {
+    @include tools.segmented-field-control;
+    gap: var(--s-space-2);
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  // The left swatch (1.125rem) + gap move the resting label past it.
+  &__control--has-leading {
+    --s-field-label-x: calc(var(--s-field-pad-x) + 1.125rem + var(--s-space-2));
+  }
+
+  // With a floating label the native placeholder is hidden at rest (the label plays its role)
+  // and shows only on focus.
+  &__control--floating &__input::placeholder {
+    color: transparent;
+  }
+
+  &__control--floating:focus-within &__input::placeholder {
+    color: var(--s-color-text-subtle);
+  }
+
+  &__swatch {
+    flex-shrink: 0;
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    border-radius: var(--s-radius-sm);
+    // Checkerboard background for transparent/empty values.
+    @include tools.checkerboard;
+    box-shadow: inset 0 0 0 1px var(--s-color-border);
+  }
+
+  &__input {
+    flex: 1;
+    min-inline-size: 0;
+    font-family: var(--s-font-mono);
+    color: var(--s-color-text);
+    background: transparent;
+    border: 0;
+    outline: none;
+
+    &::placeholder {
+      color: var(--s-color-text-subtle);
+      font-family: var(--s-font-sans);
+    }
+  }
+
+  @each $name in $sizes {
+    &--#{$name} &__control {
+      @include tools.control-size($name);
+    }
+  }
+}

@@ -1,0 +1,250 @@
+// Flexbox grid (.s-row/.s-column/.s-col*) + offsets, order, flex helpers, gutters — global
+// utilities in dist/styles.css. A 12-column flex grid, mobile-first breakpoints (min-width),
+// gutters via negative margins (not gap: it breaks %-width columns).
+@use 'sass:map';
+@use 'sass:math';
+@use 'settings';
+
+@layer smalt.utilities {
+  $cols: settings.$grid-columns;
+
+  // Flex helper values (name suffix → CSS value).
+  $justify: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    between: space-between,
+    around: space-around,
+    evenly: space-evenly,
+  );
+  $items: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    baseline: baseline,
+    stretch: stretch,
+  );
+  $content: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    between: space-between,
+    around: space-around,
+    stretch: stretch,
+  );
+  $self: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    baseline: baseline,
+    stretch: stretch,
+  );
+
+  // Full set of grid classes for one breakpoint. $infix is '' (xs) or '-sm'/'-md'/…
+  @mixin grid-set($infix) {
+    // Containers.
+    .s-flex#{$infix},
+    .s-row#{$infix},
+    .s-column#{$infix} {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .s-row#{$infix} {
+      flex-direction: row;
+    }
+    .s-column#{$infix} {
+      flex-direction: column;
+    }
+    // Container modifiers (compound selectors outrank the base one, so order does not matter).
+    .s-flex#{$infix}.s-inline,
+    .s-row#{$infix}.s-inline,
+    .s-column#{$infix}.s-inline {
+      display: inline-flex;
+    }
+    .s-row#{$infix}.s-reverse {
+      flex-direction: row-reverse;
+    }
+    .s-column#{$infix}.s-reverse {
+      flex-direction: column-reverse;
+    }
+    .s-wrap#{$infix} {
+      flex-wrap: wrap;
+    }
+    .s-no-wrap#{$infix} {
+      flex-wrap: nowrap;
+    }
+    .s-reverse-wrap#{$infix} {
+      flex-wrap: wrap-reverse;
+    }
+
+    // Columns: base ones (flex modes, work in any flex container).
+    .s-col#{$infix} {
+      flex: 10000 1 0%;
+    }
+    .s-col#{$infix}-auto {
+      flex: 0 0 auto;
+    }
+    .s-col#{$infix}-grow {
+      flex: 1 0 auto;
+    }
+    .s-col#{$infix}-shrink {
+      flex: 0 1 auto;
+    }
+
+    // Paired width rule for -auto: without it `s-col-12 s-col-md-auto` stays full-row —
+    // nothing overrides width: 100% from the base .s-col-12, and the column wraps.
+    .s-row > .s-col#{$infix}-auto {
+      width: auto;
+      height: auto;
+    }
+    .s-column > .s-col#{$infix}-auto {
+      width: auto;
+      height: auto;
+    }
+
+    // Numbered columns size by parent context: in .s-row it is width, in .s-column height.
+    @for $i from 0 through $cols {
+      $w: math.div($i, $cols) * 100%;
+      .s-row > .s-col#{$infix}-#{$i} {
+        height: auto;
+        width: $w;
+      }
+      .s-column > .s-col#{$infix}-#{$i} {
+        width: auto;
+        height: $w;
+      }
+    }
+
+    // Offsets (0..cols-1): a left shift by a fraction of the width.
+    @for $i from 0 through $cols - 1 {
+      .s-offset#{$infix}-#{$i} {
+        margin-left: math.div($i, $cols) * 100%;
+      }
+    }
+
+    .s-order#{$infix}-first {
+      order: -10000;
+    }
+    .s-order#{$infix}-last {
+      order: 10000;
+    }
+    .s-order#{$infix}-none {
+      order: 0;
+    }
+
+    // Flex alignment/distribution helpers.
+    @each $name, $val in $justify {
+      .s-justify#{$infix}-#{$name} {
+        justify-content: $val;
+      }
+    }
+    @each $name, $val in $items {
+      .s-items#{$infix}-#{$name} {
+        align-items: $val;
+      }
+    }
+    @each $name, $val in $content {
+      .s-content#{$infix}-#{$name} {
+        align-content: $val;
+      }
+    }
+    @each $name, $val in $self {
+      .s-self#{$infix}-#{$name} {
+        align-self: $val;
+      }
+    }
+    .s-flex#{$infix}-center {
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  // Mobile-first cascade: xs without a media wrapper, other breakpoints in @media (min-width).
+  @each $bp, $min in settings.$breakpoints {
+    $infix: '-#{$bp}';
+    @if $bp == xs {
+      $infix: '';
+    }
+    @if $min == 0 {
+      @include grid-set($infix);
+    } @else {
+      @media (min-width: $min) {
+        @include grid-set($infix);
+      }
+    }
+  }
+
+  // Gutters (a single set, no breakpoints). A negative margin on the parent + a positive
+  // margin (regular children) / padding (%-width columns) on the direct children.
+  // Caveat: the gutter parent cannot have a background/border/own margin — wrap it instead.
+  @each $k, $v in settings.$spacing {
+    $s: var(--s-space-#{$k});
+    $neg: calc(#{$s} * -1);
+
+    .s-gutter-#{$k} {
+      margin-top: $neg;
+      margin-left: $neg;
+      > * {
+        margin-top: $s;
+        margin-left: $s;
+      }
+    }
+    .s-gutter-x-#{$k} {
+      margin-left: $neg;
+      > * {
+        margin-left: $s;
+      }
+    }
+    .s-gutter-y-#{$k} {
+      margin-top: $neg;
+      > * {
+        margin-top: $s;
+      }
+    }
+
+    .s-col-gutter-#{$k} {
+      margin-top: $neg;
+      margin-left: $neg;
+      > * {
+        padding-top: $s;
+        padding-left: $s;
+      }
+    }
+    .s-col-gutter-x-#{$k} {
+      margin-left: $neg;
+      > * {
+        padding-left: $s;
+      }
+    }
+    .s-col-gutter-y-#{$k} {
+      margin-top: $neg;
+      > * {
+        padding-top: $s;
+      }
+    }
+  }
+
+  // Sizing helpers.
+  .s-fit {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .s-full-width {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .s-full-height {
+    height: 100% !important;
+  }
+  .s-window-width {
+    width: 100vw !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .s-window-height {
+    height: 100vh !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}

@@ -1,0 +1,67 @@
+// Level 1 — PRIMITIVE tokens. CSS variables are generated from Sass maps (settings).
+@use 'sass:meta';
+@use 'settings';
+@use 'tools';
+
+// The layer order is declared by the aggregator's first partial, not index.scss: the declaration
+// must precede the rules, and @use must precede the declaration. Every component chunk repeats
+// the same order (scripts/postcss-layer.mjs): the first declaration sets the priority, and which
+// file reaches the document first is unknown.
+@layer smalt.tokens, smalt.base, smalt.components, smalt.utilities;
+
+@layer smalt.tokens {
+  :root {
+    @include tools.emit-palettes(settings.$palettes);
+    // Brand colors (--s-primary … --s-dark-page) are the runtime theming knob.
+    @include tools.emit-vars(settings.$brand-colors);
+    // Material Design palette (--s-<family> + --s-<family>-1..14) for utilities and the color prop.
+    @include tools.emit-material(settings.$material);
+    --s-white: #{settings.$white};
+    --s-black: #{settings.$black};
+
+    @each $k, $v in settings.$spacing {
+      --s-space-#{$k}: #{$v};
+    }
+    @each $k, $v in settings.$radius {
+      --s-radius-#{$k}: #{$v};
+    }
+
+    // meta.inspect keeps the quotes around font names with spaces ('Segoe UI').
+    --s-font-sans: #{meta.inspect(settings.$font-sans)};
+    --s-font-heading: #{meta.inspect(settings.$font-heading)};
+    --s-font-mono: #{meta.inspect(settings.$font-mono)};
+    @each $k, $v in settings.$font-size {
+      --s-font-size-#{$k}: #{$v};
+    }
+    @each $k, $v in settings.$font-weight {
+      --s-font-weight-#{$k}: #{$v};
+    }
+    @each $k, $v in settings.$line-height {
+      --s-line-height-#{$k}: #{$v};
+    }
+
+    // MD elevation levels.
+    @each $k, $v in settings.$elevation {
+      --s-elevation-#{$k}: #{$v};
+    }
+
+    // MD state-layer opacities.
+    @each $k, $v in settings.$state-layer {
+      --s-state-#{$k}: #{$v};
+    }
+
+    @each $k, $v in settings.$z-index {
+      --s-z-#{$k}: #{$v};
+    }
+    @each $k, $v in settings.$duration {
+      --s-duration-#{$k}: #{$v};
+    }
+    --s-ease-standard: #{settings.$ease-standard};
+
+    // Breakpoints as variables — for matchMedia and calc/clamp. Useless in @media itself: a media
+    // query does not read CSS variables, use the respond-to mixin from @smalt-ui/core/scss.
+    @each $k, $v in settings.$breakpoints {
+      --s-breakpoint-#{$k}: #{$v};
+    }
+  }
+}

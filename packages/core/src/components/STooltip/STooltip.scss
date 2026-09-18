@@ -1,0 +1,20 @@
+@use '../../styles/tools';
+.s-tooltip__content {
+  @include tools.reset-inherited;
+  z-index: var(--s-z-popover);
+  max-width: 16rem;
+  padding: var(--s-space-2) var(--s-space-3);
+  font-size: var(--s-font-size-xs);
+  color: var(--s-color-text-inverted);
+  background-color: var(--s-color-text);
+  border-radius: var(--s-radius-sm);
+  box-shadow: var(--s-tooltip-elevation, var(--s-elevation-2));
+}
+
+.s-tooltip__content--square {
+  border-radius: 0;
+}
+
+.s-tooltip__arrow {
+  fill: var(--s-color-text);
+}

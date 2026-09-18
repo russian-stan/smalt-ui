@@ -1,0 +1,40 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+.s-toggle {
+  // typescale sets its own line-height/letter-spacing, so the reset skips them.
+  @include tools.reset-inherited($typography: false);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-space-2);
+  @include tools.typescale('label-lg');
+  color: var(--s-color-text);
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid var(--s-color-outline);
+  border-radius: var(--s-radius-md);
+  @include tools.transition(background-color, color, border-color);
+  @include tools.state-layer;
+  @include tools.disabled-state;
+
+  &--square {
+    border-radius: 0;
+  }
+
+  @each $name in $sizes {
+    &--#{$name} {
+      @include tools.control-size($name);
+    }
+  }
+
+  // Active (pressed) state — Reka sets data-state="on": tonal fill (MD).
+  &[data-state='on'] {
+    color: var(--s-toggle-c, var(--s-color-on-primary-container));
+    background-color: var(--s-toggle-c-subtle, var(--s-color-primary-container));
+    border-color: transparent;
+    @include tools.state-layer(var(--s-toggle-c, var(--s-color-on-primary-container)));
+  }
+}

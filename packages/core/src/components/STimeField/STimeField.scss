@@ -1,0 +1,53 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+// STimeField = SFormField (label/hint/error) + a flex frame with a segmented time control.
+// Frame/border/focus/height live on .s-time-field__wrap; the segmented control inside is
+// borderless flex:1; prepend/append are flex children at the edges.
+.s-time-field {
+  &__wrap {
+    @include tools.field-shell;
+    gap: var(--s-space-2);
+  }
+
+  &__control {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    height: 100%;
+  }
+
+  &__segment {
+    @include tools.segmented-field-segment;
+  }
+
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  &__wrap--has-leading {
+    @include tools.field-label-leading;
+  }
+
+  @include tools.segmented-field-resting-segments;
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  @each $name in $sizes {
+    &--#{$name} &__wrap {
+      @include tools.control-size($name);
+    }
+  }
+}

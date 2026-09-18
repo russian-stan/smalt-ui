@@ -1,0 +1,6 @@
+@use '../../styles/tools';
+.s-toggle-group {
+  @include tools.reset-inherited;
+  display: inline-flex;
+  gap: var(--s-space-1);
+}

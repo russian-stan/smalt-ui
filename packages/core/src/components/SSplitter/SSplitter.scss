@@ -1,0 +1,70 @@
+@use '../../styles/tools';
+
+.s-splitter {
+  @include tools.reset-inherited;
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  color: var(--s-color-text);
+  border: 1px solid var(--s-color-border);
+  border-radius: var(--s-radius-md);
+  overflow: hidden;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &__panel {
+    overflow: auto;
+  }
+
+  &__handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: var(--s-color-border);
+    @include tools.transition(background-color);
+
+    &:hover,
+    &[data-state='drag'] {
+      background: var(--s-color-primary);
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  &--horizontal &__handle {
+    // 5px is the handle's grab area thickness; it does not fit the spacing scale.
+    inline-size: 5px;
+    cursor: col-resize;
+  }
+
+  &--vertical &__handle {
+    block-size: 5px;
+    cursor: row-resize;
+  }
+
+  &__grip {
+    background: var(--s-color-surface);
+    border-radius: var(--s-radius-full);
+    opacity: 0.9;
+  }
+
+  &--horizontal &__grip {
+    // 2px is the grip thickness, outside the spacing scale.
+    inline-size: 2px;
+    block-size: var(--s-space-6);
+  }
+
+  &--vertical &__grip {
+    inline-size: var(--s-space-6);
+    block-size: 2px;
+  }
+}

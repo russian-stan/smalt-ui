@@ -1,0 +1,22 @@
+{
+  "name": "example",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:treeshake": "vite build --config vite.treeshake.config.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@smalt-ui/core": "workspace:*",
+    "reka-ui": "^2.0.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "unplugin-vue-components": "^32.1.0",
+    "vite": "^8.0.0"
+  }
+}

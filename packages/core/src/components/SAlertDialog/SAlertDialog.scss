@@ -1,0 +1,53 @@
+@use '../../styles/tools';
+.s-alert-dialog {
+  &__overlay {
+    @include tools.reset-inherited;
+    position: fixed;
+    inset: 0;
+    z-index: var(--s-z-overlay);
+    background-color: var(--s-color-overlay);
+  }
+
+  &__content {
+    @include tools.reset-inherited;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: var(--s-z-modal);
+    width: min(92vw, 26rem);
+    padding: var(--s-space-6);
+    color: var(--s-color-text);
+    background-color: var(--s-color-surface);
+    border-radius: var(--s-radius-md);
+    box-shadow: var(--s-elevation-3);
+    transform: translate(-50%, -50%);
+  }
+
+  &__content--square {
+    border-radius: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-lg);
+    font-weight: var(--s-font-weight-semibold);
+  }
+
+  &__description {
+    margin: var(--s-space-2) 0 0;
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+
+  &__body {
+    margin-top: var(--s-space-4);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--s-space-2);
+    margin-top: var(--s-space-6);
+  }
+}

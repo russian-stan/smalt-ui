@@ -1,0 +1,78 @@
+@use '../../styles/tools';
+
+// BEM elements of the dialog (the markup has no root .s-dialog class — it serves only as the
+// Sass parent for name concatenation, `&__x` = `.s-dialog__x`).
+.s-dialog {
+  &__overlay {
+    @include tools.reset-inherited;
+    position: fixed;
+    inset: 0;
+    z-index: var(--s-z-overlay);
+    background-color: var(--s-color-overlay);
+  }
+
+  &__content {
+    @include tools.reset-inherited;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: var(--s-z-modal);
+    transform: translate(-50%, -50%);
+    width: min(92vw, var(--s-dialog-width, 32rem));
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: var(--s-space-6);
+    color: var(--s-color-text);
+    background-color: var(--s-color-surface);
+    border-radius: var(--s-radius-md);
+    box-shadow: var(--s-elevation-3);
+  }
+
+  &__content--square {
+    border-radius: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-lg);
+    font-weight: var(--s-font-weight-semibold);
+  }
+
+  &__description {
+    margin: var(--s-space-2) 0 0;
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+
+  &__body {
+    margin-top: var(--s-space-4);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--s-space-2);
+    margin-top: var(--s-space-6);
+  }
+
+  &__close {
+    position: absolute;
+    top: var(--s-space-3);
+    right: var(--s-space-3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--s-font-size-xl);
+    line-height: 1;
+    color: var(--s-color-text-muted);
+    background: transparent;
+    border: none;
+    border-radius: var(--s-radius-full);
+    cursor: pointer;
+    @include tools.transition(background-color);
+    @include tools.state-layer;
+  }
+}

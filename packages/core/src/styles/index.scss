@@ -1,0 +1,10 @@
+// @smalt-ui/core style aggregator. Compiled to dist/styles.css.
+// Order: primitive → semantic → base → utilities.
+@use 'tokens';
+@use 'semantic';
+@use 'base';
+@use 'typography';
+@use 'spacing';
+@use 'grid';
+@use 'layout';
+@use 'colors';

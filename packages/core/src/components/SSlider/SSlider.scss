@@ -1,0 +1,112 @@
+@use '../../styles/tools';
+
+.s-slider__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 1.25rem;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+
+  // Pressing the track starts a drag (Reka moves the thumb right away), so the "grabbing"
+  // cursor applies to the whole control, not just the thumb.
+  &:active {
+    cursor: grabbing;
+  }
+
+  // After the cursor rules: for disabled, not-allowed must override grab/grabbing
+  // (equal specificity, order decides).
+  @include tools.disabled-state;
+}
+
+// Reserves space above the track for the always-visible value label: otherwise, with
+// `valueAlways`, the bubble would overlap the field label above. It is a margin, not padding:
+// Reka binds `pointerdown` (which sets the value by X) to the whole control, and padding would
+// hand the strip above the track clicks that visually land on empty space.
+.s-slider__control--value-always {
+  margin-block-start: 2.5rem;
+}
+
+.s-slider__track {
+  position: relative;
+  flex-grow: 1;
+  height: 0.25rem;
+  background-color: var(--s-color-surface-variant);
+  border-radius: var(--s-radius-full);
+}
+
+.s-slider__range {
+  position: absolute;
+  height: 100%;
+  background-color: var(--s-slider-c, var(--s-color-primary));
+  border-radius: inherit;
+}
+
+.s-slider__thumb {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--s-slider-c, var(--s-color-primary));
+  border-radius: var(--s-radius-full);
+  box-shadow: var(--s-elevation-1);
+  cursor: grab;
+  @include tools.transition(box-shadow);
+
+  &:hover {
+    box-shadow: var(--s-elevation-2);
+  }
+
+  // Reka captures the pointer on the thumb (setPointerCapture), so the cursor comes from here
+  // for the whole drag, even when the mouse leaves the slider.
+  &:active {
+    cursor: grabbing;
+  }
+
+  // Cursor only: the wrapping control already applies the disabled opacity; another
+  // disabled-state here would stack 0.38 a second time.
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+// MD3 value bubble above the thumb. Hidden at rest (opacity + a downward offset), it appears on
+// hover/focus/drag or permanently with `valueAlways`. JS sets the `--visible` class because
+// Reka exposes no DOM attribute for dragging that CSS could use.
+.s-slider__value {
+  position: absolute;
+  inset-block-end: calc(100% + 0.5rem);
+  inset-inline-start: 50%;
+  min-inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding-inline: 0.375rem;
+  display: grid;
+  place-items: center;
+  color: var(--s-slider-c-on, var(--s-color-primary-contrast));
+  background-color: var(--s-slider-c, var(--s-color-primary));
+  border-radius: var(--s-radius-md);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 0.25rem);
+  @include tools.typescale('label-sm');
+  @include tools.transition(opacity, transform);
+
+  // Arrow pointing at the thumb: a rotated square under the bubble's base.
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 100%;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    background-color: inherit;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &--visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

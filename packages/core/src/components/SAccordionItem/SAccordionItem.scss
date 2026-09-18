@@ -1,0 +1,92 @@
+// An item is part of the .s-accordion block; its styles live with the component that renders it.
+@use '../../styles/tools';
+
+.s-accordion__item {
+  @include tools.reset-inherited;
+  border-bottom: 1px solid var(--s-color-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.s-accordion__header {
+  margin: 0;
+}
+
+.s-accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-space-3);
+  width: 100%;
+  padding: var(--s-space-4);
+  font-family: var(--s-font-heading);
+  font-size: var(--s-font-size-sm);
+  font-weight: var(--s-font-weight-medium);
+  color: var(--s-color-text);
+  text-align: left;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  @include tools.transition(background-color);
+  @include tools.state-layer;
+  @include tools.disabled-state;
+}
+
+.s-accordion__title {
+  flex: 1;
+}
+
+.s-accordion__chevron {
+  flex-shrink: 0;
+  color: var(--s-color-text-muted);
+  @include tools.transition(transform);
+}
+
+.s-accordion__trigger[data-state='open'] .s-accordion__chevron {
+  transform: rotate(180deg);
+}
+
+.s-accordion__content {
+  overflow: hidden;
+
+  &[data-state='open'] {
+    animation: s-accordion-down var(--s-duration-base) var(--s-ease-standard);
+  }
+
+  &[data-state='closed'] {
+    animation: s-accordion-up var(--s-duration-base) var(--s-ease-standard);
+  }
+}
+
+.s-accordion__body {
+  padding: var(--s-space-4) var(--s-space-4) var(--s-space-4);
+  font-family: var(--s-font-sans);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text-muted);
+}
+
+@keyframes s-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-accordion-content-height);
+  }
+}
+
+@keyframes s-accordion-up {
+  from {
+    height: var(--reka-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-accordion__content {
+    animation: none;
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "smalt-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter docs dev",
+    "build": "pnpm --filter \"./packages/*\" -r build",
+    "build:docs": "pnpm --filter docs build",
+    "build:docs:dist": "pnpm --filter \"./packages/*\" -r build && pnpm --filter docs build:dist",
+    "test": "pnpm -r test",
+    "test:types": "pnpm -r test:types",
+    "test:browser": "pnpm --filter @smalt-ui/core test:browser",
+    "test:visual": "pnpm --filter \"./packages/*\" -r build && pnpm --filter docs build && playwright test",
+    "test:visual:update": "pnpm --filter \"./packages/*\" -r build && pnpm --filter docs build && playwright test --update-snapshots",
+    "test:visual:update:one": "node scripts/vr-update-one.mjs",
+    "test:dist": "pnpm build:docs:dist && playwright test playwright/console.spec.ts",
+    "lint": "eslint . && pnpm --filter docs audit:demos",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "size": "pnpm --filter @smalt-ui/core size",
+    "lint:pkg": "pnpm --filter @smalt-ui/core lint:pkg",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:types && pnpm test:browser && pnpm build && pnpm size && pnpm lint:pkg && pnpm test:dist",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,mts,vue}": "eslint --fix",
+    "*.{json,md,css,yaml,yml}": "prettier --write"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^22.10.0",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "eslint": "^10.6.0",
+    "eslint-plugin-vue": "^10.9.2",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.5",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.3.7"
+  }
+}

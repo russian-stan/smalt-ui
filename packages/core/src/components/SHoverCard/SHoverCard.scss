@@ -1,0 +1,19 @@
+@use '../../styles/tools';
+
+.s-hover-card__content {
+  @include tools.reset-inherited;
+  @include tools.floating-surface;
+  z-index: var(--s-z-popover);
+  width: 18rem;
+  padding: var(--s-space-4);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+}
+
+.s-hover-card__content--square {
+  border-radius: 0;
+}
+
+.s-hover-card__arrow {
+  @include tools.floating-arrow;
+}

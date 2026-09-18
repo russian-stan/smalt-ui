@@ -1,0 +1,113 @@
+@use '../../styles/tools';
+
+.s-drawer {
+  &__overlay {
+    @include tools.reset-inherited;
+    position: fixed;
+    inset: 0;
+    z-index: var(--s-z-overlay);
+    background-color: var(--s-color-overlay);
+  }
+
+  &__content {
+    @include tools.reset-inherited;
+    position: fixed;
+    z-index: var(--s-z-modal);
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-space-5);
+    color: var(--s-color-text);
+    background-color: var(--s-color-surface);
+    box-shadow: var(--s-elevation-3);
+
+    // Horizontal sides: a full-height panel.
+    &--left,
+    &--right {
+      top: 0;
+      bottom: 0;
+      width: min(90vw, 22rem);
+    }
+
+    &--left {
+      left: 0;
+      border-right: 1px solid var(--s-color-border);
+      border-radius: 0 var(--s-radius-md) var(--s-radius-md) 0;
+    }
+
+    &--right {
+      right: 0;
+      border-left: 1px solid var(--s-color-border);
+      border-radius: var(--s-radius-md) 0 0 var(--s-radius-md);
+    }
+
+    // Vertical sides: a full-width panel.
+    &--top,
+    &--bottom {
+      left: 0;
+      right: 0;
+      height: min(90vh, 20rem);
+    }
+
+    &--top {
+      top: 0;
+      border-bottom: 1px solid var(--s-color-border);
+      border-radius: 0 0 var(--s-radius-md) var(--s-radius-md);
+    }
+
+    &--bottom {
+      bottom: 0;
+      border-top: 1px solid var(--s-color-border);
+      border-radius: var(--s-radius-md) var(--s-radius-md) 0 0;
+    }
+  }
+
+  &__content--square {
+    border-radius: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-lg);
+    font-weight: var(--s-font-weight-semibold);
+  }
+
+  &__description {
+    margin: var(--s-space-2) 0 0;
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+
+  &__body {
+    flex: 1;
+    margin-top: var(--s-space-4);
+    overflow-y: auto;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--s-space-2);
+    margin-top: var(--s-space-4);
+  }
+
+  &__close {
+    position: absolute;
+    top: var(--s-space-3);
+    right: var(--s-space-3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--s-font-size-xl);
+    line-height: 1;
+    color: var(--s-color-text-muted);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: var(--s-radius-full);
+    @include tools.transition(color);
+    @include tools.state-layer;
+  }
+}

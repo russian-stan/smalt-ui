@@ -1,0 +1,59 @@
+@use '../../styles/tools';
+
+.s-calendar {
+  @include tools.reset-inherited;
+  display: inline-block;
+  padding: var(--s-space-3);
+  color: var(--s-color-text);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-space-2);
+    margin-bottom: var(--s-space-3);
+  }
+
+  &__nav {
+    @include tools.calendar-nav;
+  }
+
+  &__heading {
+    @include tools.calendar-heading;
+  }
+
+  &__months {
+    display: flex;
+    gap: var(--s-space-4);
+  }
+
+  &__grid {
+    border-collapse: collapse;
+  }
+
+  // Resists host table styles (e.g. VitePress `.vp-doc th/td` = (0,1,1)): removes borders and
+  // backgrounds that break the borderless grid design and restores center alignment — the host
+  // shifts weekday labels left through `th`. (0,2,0) wins.
+  & &__grid :where(table, thead, tbody, tr, th, td) {
+    background: none;
+    border: 0;
+    text-align: center;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &__weekday {
+    @include tools.calendar-weekday;
+  }
+
+  &__cell {
+    padding: 1px;
+  }
+
+  &__day {
+    @include tools.calendar-day;
+  }
+}

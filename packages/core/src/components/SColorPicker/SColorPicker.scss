@@ -1,0 +1,137 @@
+@use '../../styles/tools';
+
+// Root: a wrapper around the trigger (the panel goes to a portal).
+.s-color-picker {
+  display: inline-flex;
+}
+
+.s-color-picker__trigger {
+  @include tools.reset-inherited;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-space-2);
+  padding: var(--s-space-1) var(--s-space-2);
+  font-size: var(--s-font-size-sm);
+  color: var(--s-color-text);
+  background: var(--s-color-surface);
+  border: 1px solid var(--s-color-outline);
+  border-radius: var(--s-radius-md);
+  cursor: pointer;
+  @include tools.state-layer;
+  @include tools.disabled-state;
+
+  &:focus-visible {
+    @include tools.focus-ring;
+  }
+}
+
+.s-color-picker__preview {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: var(--s-radius-sm);
+  box-shadow: inset 0 0 0 1px var(--s-color-border);
+}
+
+.s-color-picker__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-space-3);
+  inline-size: 15rem;
+}
+
+.s-color-picker__area {
+  position: relative;
+  inline-size: 100%;
+  block-size: 9rem;
+  border-radius: var(--s-radius-md);
+  overflow: hidden;
+  touch-action: none;
+}
+
+.s-color-picker__area-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  // The hue is set inline (background-color), with saturation (→) and brightness (↓) on top.
+  background-image:
+    linear-gradient(to top, #000, rgba(0, 0, 0, 0)),
+    linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+
+.s-color-picker__sliders {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-space-2);
+}
+
+.s-color-picker__slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  block-size: 0.875rem;
+  touch-action: none;
+}
+
+.s-color-picker__track {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: var(--s-radius-full);
+  box-shadow: inset 0 0 0 1px var(--s-color-border);
+
+  // Checkerboard under the alpha channel.
+  &--alpha {
+    @include tools.checkerboard;
+  }
+}
+
+// The thumb is shared by the area and the sliders. It sits on arbitrary S/V canvas colors, not
+// the theme background, so its white border and dark ring are not themed: that keeps it visible
+// on any hue.
+.s-color-picker__thumb {
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 2px solid var(--s-white);
+  border-radius: var(--s-radius-full);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    var(--s-elevation-1);
+
+  &:focus-visible {
+    outline: 2px solid var(--s-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.s-color-picker__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-space-1);
+}
+
+.s-color-picker__swatch {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--s-radius-sm);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--s-color-border);
+
+  &[data-state='checked'] {
+    outline: 2px solid var(--s-color-primary);
+    outline-offset: 1px;
+  }
+
+  &:focus-visible {
+    @include tools.focus-ring;
+  }
+}
+
+.s-color-picker__swatch-fill {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+}

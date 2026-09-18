@@ -1,0 +1,815 @@
+// SETTINGS — Sass variables of the design system.
+// All are `!default`: a consumer can override them before `@use` at the Sass level.
+// Values at this level are build-time; runtime theming goes through the CSS variables
+// generated from these maps (see tools/emit-*).
+
+// --- Primitive palettes (maps → generate --s-<name>-<stop>) ----------------------
+$gray: (
+  50: #fafafa,
+  100: #f5f5f5,
+  200: #e5e5e5,
+  300: #d4d4d4,
+  400: #a3a3a3,
+  500: #737373,
+  600: #525252,
+  700: #404040,
+  800: #262626,
+  900: #171717,
+  950: #0a0a0a,
+) !default;
+$brand: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #2196f3,
+  600: #1976d2,
+  700: #1565c0,
+  800: #0d47a1,
+  900: #0b3a82,
+  950: #082a5e,
+) !default;
+// Quoted keys: gray/brand are interpolated into CSS variable names.
+// gray is the neutral (surface/text/border); brand is the primary color scale (blue 50–950).
+$palettes: (
+  'gray': $gray,
+  'brand': $brand,
+) !default;
+
+// --- Brand colors (9 scalars) --------------------------------------------------
+// The main semantic brand colors. Emitted as --s-<name> and serve as the MAIN runtime
+// theming knob: overriding --s-primary cascades to the derived states
+// (color-primary-hover/-active/-subtle are derived via color-mix in $semantic-*).
+// Values are literals, independent of the Material palette below, so overriding a color
+// family does not shift the brand.
+$brand-colors: (
+  'primary': #1976d2,
+  'secondary': #26a69a,
+  'accent': #9c27b0,
+  'positive': #21ba45,
+  'negative': #c10015,
+  'info': #31ccec,
+  'warning': #f2c037,
+  'dark': #1d1d1d,
+  'dark-page': #121212,
+) !default;
+
+// --- Material Design palette (19 families) ------------------------------------
+// The standard Material Design palette. Each family has variants 1–14; the base color
+// (--s-<family> without a suffix) = variant 6, emitted by the tools.emit-material mixin.
+// Source for the .s-text-*/.s-bg-* utilities and the color="<name>" prop.
+// Names are quoted because they are CSS color names.
+$material: (
+  'red': (
+    1: #ffebee,
+    2: #ffcdd2,
+    3: #ef9a9a,
+    4: #e57373,
+    5: #ef5350,
+    6: #f44336,
+    7: #e53935,
+    8: #d32f2f,
+    9: #c62828,
+    10: #b71c1c,
+    11: #ff8a80,
+    12: #ff5252,
+    13: #ff1744,
+    14: #d50000,
+  ),
+  'pink': (
+    1: #fce4ec,
+    2: #f8bbd0,
+    3: #f48fb1,
+    4: #f06292,
+    5: #ec407a,
+    6: #e91e63,
+    7: #d81b60,
+    8: #c2185b,
+    9: #ad1457,
+    10: #880e4f,
+    11: #ff80ab,
+    12: #ff4081,
+    13: #f50057,
+    14: #c51162,
+  ),
+  'purple': (
+    1: #f3e5f5,
+    2: #e1bee7,
+    3: #ce93d8,
+    4: #ba68c8,
+    5: #ab47bc,
+    6: #9c27b0,
+    7: #8e24aa,
+    8: #7b1fa2,
+    9: #6a1b9a,
+    10: #4a148c,
+    11: #ea80fc,
+    12: #e040fb,
+    13: #d500f9,
+    14: #aa00ff,
+  ),
+  'deep-purple': (
+    1: #ede7f6,
+    2: #d1c4e9,
+    3: #b39ddb,
+    4: #9575cd,
+    5: #7e57c2,
+    6: #673ab7,
+    7: #5e35b1,
+    8: #512da8,
+    9: #4527a0,
+    10: #311b92,
+    11: #b388ff,
+    12: #7c4dff,
+    13: #651fff,
+    14: #6200ea,
+  ),
+  'indigo': (
+    1: #e8eaf6,
+    2: #c5cae9,
+    3: #9fa8da,
+    4: #7986cb,
+    5: #5c6bc0,
+    6: #3f51b5,
+    7: #3949ab,
+    8: #303f9f,
+    9: #283593,
+    10: #1a237e,
+    11: #8c9eff,
+    12: #536dfe,
+    13: #3d5afe,
+    14: #304ffe,
+  ),
+  'blue': (
+    1: #e3f2fd,
+    2: #bbdefb,
+    3: #90caf9,
+    4: #64b5f6,
+    5: #42a5f5,
+    6: #2196f3,
+    7: #1e88e5,
+    8: #1976d2,
+    9: #1565c0,
+    10: #0d47a1,
+    11: #82b1ff,
+    12: #448aff,
+    13: #2979ff,
+    14: #2962ff,
+  ),
+  'light-blue': (
+    1: #e1f5fe,
+    2: #b3e5fc,
+    3: #81d4fa,
+    4: #4fc3f7,
+    5: #29b6f6,
+    6: #03a9f4,
+    7: #039be5,
+    8: #0288d1,
+    9: #0277bd,
+    10: #01579b,
+    11: #80d8ff,
+    12: #40c4ff,
+    13: #00b0ff,
+    14: #0091ea,
+  ),
+  'cyan': (
+    1: #e0f7fa,
+    2: #b2ebf2,
+    3: #80deea,
+    4: #4dd0e1,
+    5: #26c6da,
+    6: #00bcd4,
+    7: #00acc1,
+    8: #0097a7,
+    9: #00838f,
+    10: #006064,
+    11: #84ffff,
+    12: #18ffff,
+    13: #00e5ff,
+    14: #00b8d4,
+  ),
+  'teal': (
+    1: #e0f2f1,
+    2: #b2dfdb,
+    3: #80cbc4,
+    4: #4db6ac,
+    5: #26a69a,
+    6: #009688,
+    7: #00897b,
+    8: #00796b,
+    9: #00695c,
+    10: #004d40,
+    11: #a7ffeb,
+    12: #64ffda,
+    13: #1de9b6,
+    14: #00bfa5,
+  ),
+  'green': (
+    1: #e8f5e9,
+    2: #c8e6c9,
+    3: #a5d6a7,
+    4: #81c784,
+    5: #66bb6a,
+    6: #4caf50,
+    7: #43a047,
+    8: #388e3c,
+    9: #2e7d32,
+    10: #1b5e20,
+    11: #b9f6ca,
+    12: #69f0ae,
+    13: #00e676,
+    14: #00c853,
+  ),
+  'light-green': (
+    1: #f1f8e9,
+    2: #dcedc8,
+    3: #c5e1a5,
+    4: #aed581,
+    5: #9ccc65,
+    6: #8bc34a,
+    7: #7cb342,
+    8: #689f38,
+    9: #558b2f,
+    10: #33691e,
+    11: #ccff90,
+    12: #b2ff59,
+    13: #76ff03,
+    14: #64dd17,
+  ),
+  'lime': (
+    1: #f9fbe7,
+    2: #f0f4c3,
+    3: #e6ee9c,
+    4: #dce775,
+    5: #d4e157,
+    6: #cddc39,
+    7: #c0ca33,
+    8: #afb42b,
+    9: #9e9d24,
+    10: #827717,
+    11: #f4ff81,
+    12: #eeff41,
+    13: #c6ff00,
+    14: #aeea00,
+  ),
+  'yellow': (
+    1: #fffde7,
+    2: #fff9c4,
+    3: #fff59d,
+    4: #fff176,
+    5: #ffee58,
+    6: #ffeb3b,
+    7: #fdd835,
+    8: #fbc02d,
+    9: #f9a825,
+    10: #f57f17,
+    11: #ffff8d,
+    12: #ffff00,
+    13: #ffea00,
+    14: #ffd600,
+  ),
+  'amber': (
+    1: #fff8e1,
+    2: #ffecb3,
+    3: #ffe082,
+    4: #ffd54f,
+    5: #ffca28,
+    6: #ffc107,
+    7: #ffb300,
+    8: #ffa000,
+    9: #ff8f00,
+    10: #ff6f00,
+    11: #ffe57f,
+    12: #ffd740,
+    13: #ffc400,
+    14: #ffab00,
+  ),
+  'orange': (
+    1: #fff3e0,
+    2: #ffe0b2,
+    3: #ffcc80,
+    4: #ffb74d,
+    5: #ffa726,
+    6: #ff9800,
+    7: #fb8c00,
+    8: #f57c00,
+    9: #ef6c00,
+    10: #e65100,
+    11: #ffd180,
+    12: #ffab40,
+    13: #ff9100,
+    14: #ff6d00,
+  ),
+  'deep-orange': (
+    1: #fbe9e7,
+    2: #ffccbc,
+    3: #ffab91,
+    4: #ff8a65,
+    5: #ff7043,
+    6: #ff5722,
+    7: #f4511e,
+    8: #e64a19,
+    9: #d84315,
+    10: #bf360c,
+    11: #ff9e80,
+    12: #ff6e40,
+    13: #ff3d00,
+    14: #dd2c00,
+  ),
+  'brown': (
+    1: #efebe9,
+    2: #d7ccc8,
+    3: #bcaaa4,
+    4: #a1887f,
+    5: #8d6e63,
+    6: #795548,
+    7: #6d4c41,
+    8: #5d4037,
+    9: #4e342e,
+    10: #3e2723,
+    11: #d7ccc8,
+    12: #bcaaa4,
+    13: #8d6e63,
+    14: #5d4037,
+  ),
+  'grey': (
+    1: #fafafa,
+    2: #f5f5f5,
+    3: #eeeeee,
+    4: #e0e0e0,
+    5: #bdbdbd,
+    6: #9e9e9e,
+    7: #757575,
+    8: #616161,
+    9: #424242,
+    10: #212121,
+    11: #f5f5f5,
+    12: #eeeeee,
+    13: #bdbdbd,
+    14: #616161,
+  ),
+  'blue-grey': (
+    1: #eceff1,
+    2: #cfd8dc,
+    3: #b0bec5,
+    4: #90a4ae,
+    5: #78909c,
+    6: #607d8b,
+    7: #546e7a,
+    8: #455a64,
+    9: #37474f,
+    10: #263238,
+    11: #cfd8dc,
+    12: #b0bec5,
+    13: #78909c,
+    14: #455a64,
+  ),
+) !default;
+
+$white: #ffffff !default;
+$black: #000000 !default;
+
+// Global normalize (box-sizing/body/form controls) in styles.css, on by default.
+// A consumer embedding the library into a third-party page turns it off at the Sass level:
+// `@use '@smalt-ui/core/.../settings' with ($reset: false)`. Components stay border-box
+// regardless of this flag (reset-inherited on their roots). The pattern comes from Vuetify.
+$reset: true !default;
+
+// --- Scales -------------------------------------------------------------------
+$spacing: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  16: 4rem,
+) !default;
+
+// Grid breakpoints (min-width, mobile-first).
+// Build-time only for media queries: a media query does NOT read CSS variables.
+// Customize by overriding the map before @use. The grid column count is $grid-columns.
+$breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 1024px,
+  lg: 1440px,
+  xl: 1920px,
+) !default;
+$grid-columns: 12 !default;
+
+// Shape — the base component border radius = 8px (sm/md).
+// Components read the scale via var(--s-radius-*), so overriding the map
+// restyles them without touching the components. lg/xl are kept for customization.
+$radius: (
+  none: 0,
+  sm: 0.5rem,
+  md: 0.5rem,
+  lg: 1rem,
+  xl: 1.75rem,
+  full: 9999px,
+) !default;
+
+// Control sizes — a single size map for interactive controls (height / horizontal
+// padding scale / font scale). Replaces duplicated per-component $sizes.
+$control-sizes: (
+  sm: (
+    height: 2rem,
+    pad: 3,
+    font: sm,
+  ),
+  md: (
+    height: 2.5rem,
+    pad: 4,
+    font: sm,
+  ),
+  lg: (
+    height: 3rem,
+    pad: 5,
+    font: base,
+  ),
+) !default;
+
+// State layers (MD) — opacity of the state layer over the surface.
+$state-layer: (
+  hover: 0.08,
+  focus: 0.1,
+  pressed: 0.12,
+) !default;
+// Font size scale. xs..2xl for text/controls; 3xl..6xl are display sizes for the typography
+// headings (.s-text-h1..h4), for which the base scale (max 1.5rem) is not enough.
+$font-size: (
+  xs: 0.75rem,
+  sm: 0.875rem,
+  base: 1rem,
+  lg: 1.125rem,
+  xl: 1.25rem,
+  2xl: 1.5rem,
+  3xl: 1.875rem,
+  4xl: 2.25rem,
+  5xl: 3rem,
+  6xl: 3.75rem,
+) !default;
+// The full weight range: components use the core ones (normal/medium/semibold/bold),
+// the extremes (thin/light/black) exist for the .s-text-weight-* utilities.
+// The 'black' key is quoted: otherwise Sass treats it as a CSS color name in interpolation.
+$font-weight: (
+  thin: 100,
+  light: 300,
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700,
+  'black': 900,
+) !default;
+$line-height: (
+  tight: 1.25,
+  normal: 1.5,
+  relaxed: 1.75,
+) !default;
+
+// MD type scale — roles (size / weight / line-height / letter-spacing).
+// Values are based on $font-size; tracking uses small MD values.
+$typescale: (
+  'label-sm': (
+    size: xs,
+    weight: medium,
+    leading: tight,
+    tracking: 0.05em,
+  ),
+  'label-md': (
+    size: sm,
+    weight: medium,
+    leading: tight,
+    tracking: 0.025em,
+  ),
+  'label-lg': (
+    size: sm,
+    weight: medium,
+    leading: tight,
+    tracking: 0.00714em,
+  ),
+  'body-sm': (
+    size: xs,
+    weight: normal,
+    leading: normal,
+    tracking: 0.025em,
+  ),
+  'body-md': (
+    size: sm,
+    weight: normal,
+    leading: normal,
+    tracking: 0.01786em,
+  ),
+  'body-lg': (
+    size: base,
+    weight: normal,
+    leading: normal,
+    tracking: 0.03125em,
+  ),
+  'title-sm': (
+    size: sm,
+    weight: semibold,
+    leading: tight,
+    tracking: 0.00714em,
+  ),
+  'title-md': (
+    size: base,
+    weight: semibold,
+    leading: tight,
+    tracking: 0.009em,
+  ),
+  'title-lg': (
+    size: xl,
+    weight: semibold,
+    leading: tight,
+    tracking: 0,
+  ),
+) !default;
+
+// Public typography scale — roles of the .s-text-* utilities (h1..h6, subtitle1/2,
+// body1/2, caption, overline). The object shape matches $typescale
+// (size / weight / leading / tracking); values reference $font-size/$font-weight/
+// $line-height keys and expand into var(--s-*) in _typography.scss. Tuned for Smalt UI tokens
+// (Inter); the large display scale for h1..h4 comes from 3xl..6xl.
+$typography: (
+  'h1': (
+    size: 6xl,
+    weight: light,
+    leading: tight,
+    tracking: -0.015em,
+  ),
+  'h2': (
+    size: 5xl,
+    weight: light,
+    leading: tight,
+    tracking: -0.01em,
+  ),
+  'h3': (
+    size: 4xl,
+    weight: normal,
+    leading: tight,
+    tracking: normal,
+  ),
+  'h4': (
+    size: 3xl,
+    weight: normal,
+    leading: tight,
+    tracking: normal,
+  ),
+  'h5': (
+    size: 2xl,
+    weight: normal,
+    leading: tight,
+    tracking: normal,
+  ),
+  'h6': (
+    size: xl,
+    weight: medium,
+    leading: tight,
+    tracking: 0.0125em,
+  ),
+  'subtitle1': (
+    size: base,
+    weight: normal,
+    leading: normal,
+    tracking: 0.009em,
+  ),
+  'subtitle2': (
+    size: sm,
+    weight: medium,
+    leading: normal,
+    tracking: 0.007em,
+  ),
+  'body1': (
+    size: base,
+    weight: normal,
+    leading: normal,
+    tracking: 0.03125em,
+  ),
+  'body2': (
+    size: sm,
+    weight: normal,
+    leading: normal,
+    tracking: 0.01786em,
+  ),
+  'caption': (
+    size: xs,
+    weight: normal,
+    leading: normal,
+    tracking: 0.03333em,
+  ),
+  'overline': (
+    size: xs,
+    weight: medium,
+    leading: relaxed,
+    tracking: 0.16667em,
+  ),
+) !default;
+$z-index: (
+  dropdown: 1000,
+  sticky: 1100,
+  overlay: 1300,
+  modal: 1400,
+  popover: 1500,
+  toast: 1700,
+) !default;
+$duration: (
+  fast: 150ms,
+  base: 200ms,
+  slow: 300ms,
+) !default;
+
+// --- Scalars ------------------------------------------------------------------
+// Inter is declared by the vendored @font-face rules (fonts.css). 'Inter Variable' is the same
+// font's name in @fontsource-variable/inter: an app that loads it itself gets the right font
+// even without fonts.css.
+$font-sans: (
+  'Inter',
+  'Inter Variable',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  sans-serif
+) !default;
+// A separate heading token is a knob for apps that need a display font. By default headings
+// use the text font.
+$font-heading: var(--s-font-sans) !default;
+$font-mono: ('JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace) !default;
+$ease-standard: cubic-bezier(0.4, 0, 0.2, 1) !default;
+
+// Elevation (MD3) — levels 0–5 from umbra + penumbra. Emitted as --s-elevation-*.
+$elevation: (
+  0: none,
+  1: (
+    0 1px 2px 0 rgb(0 0 0 / 0.3),
+    0 1px 3px 1px rgb(0 0 0 / 0.15),
+  ),
+  2: (
+    0 1px 2px 0 rgb(0 0 0 / 0.3),
+    0 2px 6px 2px rgb(0 0 0 / 0.15),
+  ),
+  3: (
+    0 4px 8px 3px rgb(0 0 0 / 0.15),
+    0 1px 3px 0 rgb(0 0 0 / 0.3),
+  ),
+  4: (
+    0 6px 10px 4px rgb(0 0 0 / 0.15),
+    0 2px 3px 0 rgb(0 0 0 / 0.3),
+  ),
+  5: (
+    0 8px 12px 6px rgb(0 0 0 / 0.15),
+    0 4px 4px 0 rgb(0 0 0 / 0.3),
+  ),
+) !default;
+
+// --- Semantic roles -----------------------------------------------------------
+// createTheme() overrides these tokens (or the base brand tokens --s-primary/… from
+// $brand-colors, the recommended way). Brand bases are the same in light/dark; states are
+// derived from the base via color-mix, so overriding --s-primary cascades to
+// -hover/-active/-subtle without manual tuning. Light theme is the default.
+// Modifiers (light): hover = 12% darker, active = 22%, subtle = lightened to 88% white.
+// -contrast: white on saturated colors, black on light ones (secondary/positive/info/warning).
+// -text: the same role, but for TEXT over the page background or its own -subtle backdrop. A
+// separate token is needed because one value cannot both read as text on a dark background
+// and keep -contrast on a fill: in the dark theme these thresholds diverge.
+$semantic-light: (
+  'color-bg': var(--s-white),
+  'color-bg-subtle': var(--s-gray-50),
+  'color-bg-muted': var(--s-gray-100),
+  'color-surface': var(--s-white),
+  'color-surface-variant': var(--s-gray-100),
+  'color-overlay': rgb(22 22 25 / 0.5),
+  'color-text': var(--s-gray-900),
+  // Muted text must also read on component backdrops (-subtle of tag, avatar, alert), which
+  // are a couple of percent darker than white: plain gray-600 drops below 4.5:1 there.
+  'color-text-muted': color-mix(in srgb, var(--s-gray-600), black 10%),
+  'color-text-subtle': var(--s-gray-500),
+  'color-text-inverted': var(--s-white),
+  'color-border': var(--s-gray-200),
+  'color-border-strong': var(--s-gray-300),
+  'color-outline': var(--s-gray-400),
+  'color-primary': var(--s-primary),
+  'color-primary-hover': color-mix(in srgb, var(--s-primary), black 12%),
+  'color-primary-active': color-mix(in srgb, var(--s-primary), black 22%),
+  'color-primary-subtle': color-mix(in srgb, var(--s-primary), white 88%),
+  'color-primary-contrast': var(--s-white),
+  'color-primary-text': color-mix(in srgb, var(--s-primary), black 15%),
+  'color-primary-container': var(--s-gray-100),
+  'color-on-primary-container': var(--s-gray-900),
+  'color-secondary': var(--s-secondary),
+  'color-secondary-hover': color-mix(in srgb, var(--s-secondary), black 12%),
+  'color-secondary-active': color-mix(in srgb, var(--s-secondary), black 22%),
+  'color-secondary-subtle': color-mix(in srgb, var(--s-secondary), white 88%),
+  'color-secondary-contrast': var(--s-black),
+  'color-accent': var(--s-accent),
+  'color-accent-hover': color-mix(in srgb, var(--s-accent), black 12%),
+  'color-accent-active': color-mix(in srgb, var(--s-accent), black 22%),
+  'color-accent-subtle': color-mix(in srgb, var(--s-accent), white 88%),
+  'color-accent-contrast': var(--s-white),
+  'color-accent-text': var(--s-accent),
+  'color-positive': var(--s-positive),
+  'color-positive-hover': color-mix(in srgb, var(--s-positive), black 12%),
+  'color-positive-active': color-mix(in srgb, var(--s-positive), black 22%),
+  'color-positive-subtle': color-mix(in srgb, var(--s-positive), white 88%),
+  'color-positive-contrast': var(--s-black),
+  'color-positive-text': color-mix(in srgb, var(--s-positive), black 40%),
+  'color-warning': var(--s-warning),
+  'color-warning-hover': color-mix(in srgb, var(--s-warning), black 12%),
+  'color-warning-active': color-mix(in srgb, var(--s-warning), black 22%),
+  'color-warning-subtle': color-mix(in srgb, var(--s-warning), white 86%),
+  'color-warning-contrast': var(--s-black),
+  'color-warning-text': color-mix(in srgb, var(--s-warning), black 45%),
+  'color-negative': var(--s-negative),
+  'color-negative-hover': color-mix(in srgb, var(--s-negative), black 12%),
+  'color-negative-active': color-mix(in srgb, var(--s-negative), black 22%),
+  'color-negative-subtle': color-mix(in srgb, var(--s-negative), white 88%),
+  'color-negative-contrast': var(--s-white),
+  'color-negative-text': color-mix(in srgb, var(--s-negative), black 12%),
+  'color-info': var(--s-info),
+  'color-info-hover': color-mix(in srgb, var(--s-info), black 12%),
+  'color-info-active': color-mix(in srgb, var(--s-info), black 22%),
+  'color-info-subtle': color-mix(in srgb, var(--s-info), white 86%),
+  'color-info-contrast': var(--s-black),
+  'color-info-text': color-mix(in srgb, var(--s-info), black 45%),
+  'color-dark': var(--s-dark),
+  'color-focus-ring': var(--s-primary),
+  // Shading direction for deriving hover/active from an arbitrary color (the color prop):
+  // the light theme mixes in black.
+  'shade': #000,
+  'focus-ring-width': 2px,
+  'focus-ring-offset': 2px,
+) !default;
+
+// Modifiers (dark): hover = 15% lighter, active = 25%, subtle = a ~16% transparent tint.
+// Brand bases are the same as in light.
+$semantic-dark: (
+  'color-bg': var(--s-gray-950),
+  'color-bg-subtle': var(--s-gray-900),
+  'color-bg-muted': var(--s-gray-800),
+  'color-surface': var(--s-gray-900),
+  'color-surface-variant': var(--s-gray-800),
+  'color-overlay': rgb(0 0 0 / 0.6),
+  'color-text': var(--s-gray-50),
+  'color-text-muted': var(--s-gray-400),
+  'color-text-subtle': var(--s-gray-500),
+  'color-text-inverted': var(--s-gray-900),
+  'color-border': var(--s-gray-800),
+  'color-border-strong': var(--s-gray-700),
+  'color-outline': var(--s-gray-600),
+  'color-primary': var(--s-primary),
+  'color-primary-hover': color-mix(in srgb, var(--s-primary), white 15%),
+  'color-primary-active': color-mix(in srgb, var(--s-primary), white 25%),
+  'color-primary-subtle': color-mix(in srgb, var(--s-primary) 16%, transparent),
+  'color-primary-contrast': var(--s-white),
+  'color-primary-text': color-mix(in srgb, var(--s-primary), white 40%),
+  'color-primary-container': var(--s-gray-800),
+  'color-on-primary-container': var(--s-gray-50),
+  'color-secondary': var(--s-secondary),
+  'color-secondary-hover': color-mix(in srgb, var(--s-secondary), white 15%),
+  'color-secondary-active': color-mix(in srgb, var(--s-secondary), white 25%),
+  'color-secondary-subtle': color-mix(in srgb, var(--s-secondary) 16%, transparent),
+  'color-secondary-contrast': var(--s-black),
+  'color-accent': var(--s-accent),
+  'color-accent-hover': color-mix(in srgb, var(--s-accent), white 15%),
+  'color-accent-active': color-mix(in srgb, var(--s-accent), white 25%),
+  'color-accent-subtle': color-mix(in srgb, var(--s-accent) 16%, transparent),
+  'color-accent-contrast': var(--s-white),
+  'color-accent-text': color-mix(in srgb, var(--s-accent), white 40%),
+  'color-positive': var(--s-positive),
+  'color-positive-hover': color-mix(in srgb, var(--s-positive), white 15%),
+  'color-positive-active': color-mix(in srgb, var(--s-positive), white 25%),
+  'color-positive-subtle': color-mix(in srgb, var(--s-positive) 16%, transparent),
+  'color-positive-contrast': var(--s-black),
+  'color-positive-text': color-mix(in srgb, var(--s-positive), white 30%),
+  'color-warning': var(--s-warning),
+  'color-warning-hover': color-mix(in srgb, var(--s-warning), white 15%),
+  'color-warning-active': color-mix(in srgb, var(--s-warning), white 25%),
+  'color-warning-subtle': color-mix(in srgb, var(--s-warning) 16%, transparent),
+  'color-warning-contrast': var(--s-black),
+  'color-warning-text': var(--s-warning),
+  'color-negative': var(--s-negative),
+  'color-negative-hover': color-mix(in srgb, var(--s-negative), white 15%),
+  'color-negative-active': color-mix(in srgb, var(--s-negative), white 25%),
+  'color-negative-subtle': color-mix(in srgb, var(--s-negative) 16%, transparent),
+  'color-negative-contrast': var(--s-white),
+  'color-negative-text': color-mix(in srgb, var(--s-negative), white 45%),
+  'color-info': var(--s-info),
+  'color-info-hover': color-mix(in srgb, var(--s-info), white 15%),
+  'color-info-active': color-mix(in srgb, var(--s-info), white 25%),
+  'color-info-subtle': color-mix(in srgb, var(--s-info) 16%, transparent),
+  'color-info-contrast': var(--s-black),
+  'color-info-text': color-mix(in srgb, var(--s-info), white 40%),
+  'color-dark': var(--s-dark),
+  'color-focus-ring': var(--s-primary),
+  // The dark theme mixes in white (lightening); see the comment in $semantic-light.
+  'shade': #fff,
+) !default;

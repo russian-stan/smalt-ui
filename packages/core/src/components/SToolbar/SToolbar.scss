@@ -1,0 +1,23 @@
+@use '../../styles/tools';
+.s-toolbar {
+  @include tools.reset-inherited;
+  display: flex;
+  align-items: center;
+  gap: var(--s-space-1);
+  padding: var(--s-space-1);
+  color: var(--s-color-text);
+  background: var(--s-color-surface);
+  border: 1px solid var(--s-color-border);
+  border-radius: var(--s-radius-md);
+  box-shadow: var(--s-toolbar-elevation, var(--s-elevation-1));
+
+  &--square {
+    border-radius: 0;
+  }
+
+  &--vertical {
+    flex-direction: column;
+    align-items: stretch;
+    inline-size: max-content;
+  }
+}

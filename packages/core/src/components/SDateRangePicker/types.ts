@@ -1,0 +1,69 @@
+import type { DateValue } from '@internationalized/date'
+import type { SElevation } from '../../composables/useElevationProp'
+
+export type SDateRangePickerSize = 'sm' | 'md' | 'lg'
+export type SDateRangePickerWeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+/** Selected date range. */
+export interface SDateRange {
+  /** Range start. */
+  start: DateValue | undefined
+  /** Range end. */
+  end: DateValue | undefined
+}
+
+export interface SDateRangePickerProps {
+  /** Field id. Generated automatically when not set (SSR-safe). */
+  id?: string
+  /** Field label. */
+  label?: string
+  /** Hint below the field. */
+  hint?: string
+  /** Error message. When set, the field is marked invalid. */
+  error?: string
+  /** Field size: `sm` (32px), `md` (40px) or `lg` (48px). @defaultValue 'md' */
+  size?: SDateRangePickerSize
+  /** Disables the field and opening the calendar. */
+  disabled?: boolean
+  /** Read-only: the value cannot be changed. */
+  readonly?: boolean
+  /** Marks the field as required: draws `*` next to the label. */
+  required?: boolean
+  /** Explicitly marks the field invalid (in addition to `error`). */
+  invalid?: boolean
+  /** Square corners: removes the rounding of the field frame (rounded by default). */
+  square?: boolean
+  /**
+   * Floating label: the label lives inside the frame, looks like a placeholder at rest and moves
+   * up to the top border on focus or when filled. On by default; `false` gives a regular label
+   * above the field. The label size is fixed and does not depend on `size`.
+   */
+  floatingLabel?: boolean
+  /**
+   * Formatting locale (e.g. `en-GB`). By default it is derived from the library locale
+   * (`ConfigProvider`/`installLocale`, the `locale` option in Nuxt): `en` → `en-US`.
+   */
+  locale?: string
+  /** Minimum allowed date. */
+  minValue?: DateValue
+  /** Maximum allowed date. */
+  maxValue?: DateValue
+  /** First day of the week: 0 is Sunday, 1 is Monday, and so on. */
+  weekStartsOn?: SDateRangePickerWeekStartsOn
+  /** Always show 6 weeks (stable grid height). */
+  fixedWeeks?: boolean
+  /** Number of months shown at once. @defaultValue 2 */
+  numberOfMonths?: number
+  /** Predicate function: return `true` to disable a specific date. */
+  isDateDisabled?: (date: DateValue) => boolean
+  /** Accessible name of the open-calendar button (defaults to the locale dictionary). */
+  openCalendarLabel?: string
+  /** Accessible name of the "previous month" button (defaults to the locale dictionary). */
+  prevMonthLabel?: string
+  /** Accessible name of the "next month" button (defaults to the locale dictionary). */
+  nextMonthLabel?: string
+  /** Removes the shadow. Overridden by the `elevation` prop when it is set. */
+  flat?: boolean
+  /** Shadow level 0–5 ([scale](/style/elevation)); `0` means no shadow. Overrides `flat`. */
+  elevation?: SElevation
+}

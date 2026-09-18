@@ -1,0 +1,153 @@
+@use '../../styles/tools';
+
+$sizes: sm, md, lg;
+
+.s-date-range-picker {
+  &__control {
+    @include tools.segmented-field-control;
+  }
+
+  &__prepend {
+    @include tools.field-affix;
+  }
+
+  &__append {
+    @include tools.field-affix;
+  }
+
+  &__segment {
+    @include tools.segmented-field-segment;
+  }
+
+  &__dash {
+    padding-inline: var(--s-space-2);
+    color: var(--s-color-text-muted);
+  }
+
+  // --s-field-pad-x comes from control-size on .s-date-range-picker__control.
+  &__label {
+    @include tools.floating-label;
+  }
+
+  &__label-required {
+    color: var(--s-color-negative-text);
+  }
+
+  // With a floating label, placeholder segments and the separator are hidden at rest, since
+  // the label plays their role; they appear on focus or when filled.
+  &__control--floating:not(:focus-within):not([data-filled]) {
+    :where(.s-date-range-picker__segment, .s-date-range-picker__dash) {
+      color: transparent;
+    }
+  }
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    color: var(--s-color-text-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--s-radius-full);
+    cursor: pointer;
+    @include tools.state-layer;
+    @include tools.disabled-state;
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  @each $name in $sizes {
+    &--#{$name} &__control {
+      @include tools.control-size($name);
+    }
+  }
+}
+
+// Calendar popup (a portal, outside the .s-date-range-picker block).
+.s-date-range-picker__content {
+  @include tools.reset-inherited;
+  z-index: var(--s-z-popover);
+  padding: var(--s-space-3);
+  color: var(--s-color-text);
+  @include tools.floating-surface;
+
+  .s-date-range-picker__cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-space-2);
+    margin-bottom: var(--s-space-3);
+  }
+
+  .s-date-range-picker__nav {
+    @include tools.calendar-nav;
+  }
+
+  .s-date-range-picker__heading {
+    @include tools.calendar-heading;
+  }
+
+  .s-date-range-picker__months {
+    display: flex;
+    gap: var(--s-space-4);
+  }
+
+  .s-date-range-picker__grid {
+    border-collapse: collapse;
+    @include tools.calendar-table-reset;
+  }
+
+  .s-date-range-picker__cal-row {
+    display: grid;
+    // A day fills the whole cell (`inline-size: 100%`) for continuous range highlighting, so
+    // it has no width of its own; the columns get a 2rem floor, otherwise `1fr`
+    // (= minmax(0,1fr)) collapses the cells into a heap.
+    grid-template-columns: repeat(7, minmax(2rem, 1fr));
+  }
+
+  .s-date-range-picker__weekday {
+    @include tools.calendar-weekday;
+  }
+
+  .s-date-range-picker__cell {
+    padding: 0;
+  }
+
+  .s-date-range-picker__day {
+    @include tools.calendar-day;
+    inline-size: 100%;
+
+    // Highlight for the days inside the range.
+    &[data-highlighted],
+    &[data-selected] {
+      background: var(--s-color-primary-container);
+      color: var(--s-color-on-primary-container);
+      border-radius: 0;
+    }
+
+    // Range ends: primary fill and outer rounding.
+    &[data-selection-start] {
+      color: var(--s-color-primary-contrast);
+      background: var(--s-color-primary);
+      border-start-start-radius: var(--s-radius-full);
+      border-end-start-radius: var(--s-radius-full);
+    }
+
+    &[data-selection-end] {
+      color: var(--s-color-primary-contrast);
+      background: var(--s-color-primary);
+      border-start-end-radius: var(--s-radius-full);
+      border-end-end-radius: var(--s-radius-full);
+    }
+  }
+}
+
+.s-date-range-picker__content--square {
+  --s-surface-radius: 0;
+}

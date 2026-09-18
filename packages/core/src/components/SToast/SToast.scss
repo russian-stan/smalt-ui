@@ -1,0 +1,72 @@
+@use 'sass:map';
+@use '../../styles/tools';
+
+$variants: (
+  info: --s-color-info,
+  positive: --s-color-positive,
+  warning: --s-color-warning,
+  negative: --s-color-negative,
+);
+
+.s-toast {
+  @include tools.floating-surface;
+
+  &--square {
+    --s-surface-radius: 0;
+  }
+
+  display: flex;
+  gap: var(--s-space-3);
+  align-items: flex-start;
+  width: 22rem;
+  max-width: calc(100vw - var(--s-space-8));
+  padding: var(--s-space-4);
+
+  @each $name, $var in $variants {
+    &--#{$name} .s-toast__icon {
+      color: var(--s-toast-c, var(#{$var}));
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 0.0625rem;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-sm);
+    font-weight: var(--s-font-weight-semibold);
+    color: var(--s-color-text);
+  }
+
+  &__description {
+    margin-top: var(--s-space-1);
+    font-family: var(--s-font-sans);
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+
+  &__close {
+    flex-shrink: 0;
+    padding: 0 var(--s-space-1);
+    font-size: var(--s-font-size-lg);
+    line-height: 1;
+    color: var(--s-color-text-subtle);
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-radius: var(--s-radius-full);
+    @include tools.transition(color);
+    @include tools.state-layer;
+
+    &:hover {
+      color: var(--s-color-text);
+    }
+  }
+}

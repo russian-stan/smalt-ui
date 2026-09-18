@@ -1,0 +1,297 @@
+@use '../../styles/tools';
+
+.s-stepper {
+  @include tools.reset-inherited;
+  display: flex;
+  color: var(--s-color-text);
+
+  &--horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+    // A horizontal stepper takes the full container width so the steps spread out evenly
+    // (as a flex item it would otherwise shrink to the content width).
+    inline-size: 100%;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &__item {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  // Horizontally a step is a "trigger + connector" row: the label takes as much as it needs, and
+  // the line takes the remaining width. Equal shares per step would instead leave gaps at the
+  // edges — the outer circles would sit in the middle of their share.
+  &--horizontal &__item {
+    flex: 0 1 auto;
+    flex-direction: row;
+    align-items: flex-start;
+    // A step does not shrink below min-content: otherwise the label overflows its step and
+    // overlaps the neighbor instead of wrapping by words.
+    min-inline-size: min-content;
+  }
+
+  // Only steps with a connector grow. The last one stays content-sized: if it stretched too,
+  // its label would hang at the left edge of empty space.
+  &--horizontal &__item:has(> .s-stepper__separator) {
+    flex: 1 1 auto;
+  }
+
+  &--vertical &__item {
+    flex-direction: column;
+    flex: 0 0 auto;
+    align-items: flex-start;
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--s-space-3);
+    padding: var(--s-space-1);
+    background: transparent;
+    border: 0;
+    border-radius: var(--s-radius-md);
+    cursor: pointer;
+    text-align: start;
+
+    // An unavailable step in linear mode is only non-clickable: the stepper serves as a table of
+    // contents, and dimmed future step titles would be unreadable. Only explicitly disabled
+    // steps are dimmed.
+    &[data-disabled] {
+      cursor: default;
+    }
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  &--horizontal &__trigger {
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-space-3);
+    padding: 0;
+    text-align: center;
+  }
+
+  &--vertical &__trigger {
+    @include tools.state-layer;
+  }
+
+  &__item--disabled &__trigger {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+
+  &__indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    font-size: var(--s-font-size-base);
+    font-weight: var(--s-font-weight-semibold);
+    color: var(--s-color-text-muted);
+    background: var(--s-color-surface-variant);
+    border: 1px solid var(--s-color-border);
+    border-radius: var(--s-radius-full);
+    @include tools.transition(background-color, color, border-color);
+  }
+
+  // The check mark shows only on a completed step, the number on the rest.
+  &__check {
+    display: none;
+  }
+
+  &__item[data-state='completed'] &__indicator {
+    color: var(--s-stepper-c-on, var(--s-color-primary-contrast));
+    background: var(--s-stepper-c, var(--s-color-primary));
+    border-color: var(--s-stepper-c, var(--s-color-primary));
+  }
+
+  &__item[data-state='completed'] &__check {
+    display: inline-flex;
+  }
+
+  &__item[data-state='completed'] &__number {
+    display: none;
+  }
+
+  &__item[data-state='active'] &__indicator {
+    color: var(--s-stepper-c, var(--s-color-primary-text));
+    background: var(--s-stepper-c-subtle, var(--s-color-primary-container));
+    border-color: var(--s-stepper-c, var(--s-color-primary-text));
+  }
+
+  &--active-filled &__item[data-state='active'] &__indicator {
+    color: var(--s-stepper-c-on, var(--s-color-primary-contrast));
+    background: var(--s-stepper-c, var(--s-color-primary));
+    border-color: var(--s-stepper-c, var(--s-color-primary));
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-space-1);
+    min-width: 0;
+  }
+
+  &--horizontal &__text {
+    align-items: center;
+    max-inline-size: 12rem;
+    text-align: center;
+  }
+
+  &__title {
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-sm);
+    font-weight: var(--s-font-weight-semibold);
+    line-height: var(--s-line-height-tight);
+    color: var(--s-color-text);
+  }
+
+  &__description {
+    font-size: var(--s-font-size-xs);
+    line-height: var(--s-line-height-normal);
+    color: var(--s-color-text-muted);
+  }
+
+  &__separator {
+    background: var(--s-color-border);
+  }
+
+  // Horizontal connector: a thin line between steps, raised by half the circle so it hits the
+  // circle's center wherever the step starts.
+  &--horizontal &__separator {
+    flex: 1 1 auto;
+    min-inline-size: var(--s-space-6);
+    block-size: 1px;
+    margin-inline: var(--s-space-3);
+    margin-block-start: 1.25rem;
+  }
+
+  &--vertical &__separator {
+    inline-size: 1px;
+    block-size: var(--s-space-6);
+    margin-inline-start: calc(var(--s-space-1) + 1.25rem);
+    margin-block: var(--s-space-1);
+  }
+
+  &__item[data-state='completed'] &__separator {
+    background: var(--s-stepper-c, var(--s-color-primary));
+  }
+
+  // Label placement is an "orientation × side" pair: the same side means a different layout in
+  // different orientations. The modifier pair uses #{&} interpolation because Sass forbids "&"
+  // in the middle of a compound selector.
+
+  // Horizontal, label above the circle. Steps align to the bottom edge: labels of different
+  // heights would otherwise misalign the circles vertically and the connector would miss their
+  // centers.
+  &--horizontal#{&}--label-top {
+    align-items: flex-end;
+  }
+
+  // The DOM order (indicator → title → description) is kept for screen readers; CSS reverses
+  // the column.
+  &--horizontal#{&}--label-top &__item {
+    align-items: flex-end;
+  }
+
+  &--horizontal#{&}--label-top &__trigger {
+    flex-direction: column-reverse;
+  }
+
+  // The circle sits at the bottom edge of the step, and its offset from the top depends on the
+  // label height, so the connector is raised from the bottom.
+  &--horizontal#{&}--label-top &__separator {
+    margin-block-start: 0;
+    margin-block-end: 1.25rem;
+  }
+
+  // Horizontal, label to the side. The step becomes a row, and the connector turns from a line
+  // over the step into a stretching element between steps: the circle is not in the middle
+  // of the step, so measuring from its center makes no sense.
+  &--horizontal#{&}--label-start,
+  &--horizontal#{&}--label-end {
+    align-items: center;
+  }
+
+  &--horizontal#{&}--label-start &__item,
+  &--horizontal#{&}--label-end &__item {
+    align-items: center;
+  }
+
+  &--horizontal#{&}--label-start &__trigger,
+  &--horizontal#{&}--label-end &__trigger {
+    flex-direction: row;
+  }
+
+  // The label sits next to the circle, so the line runs through the center of the whole row.
+  &--horizontal#{&}--label-start &__separator,
+  &--horizontal#{&}--label-end &__separator {
+    margin-block: 0;
+  }
+
+  // Mirrored side: label to the left of the circle. Alignment stays centered — a title and
+  // description of different lengths would otherwise drift apart at the edge.
+  &--horizontal#{&}--label-start &__trigger {
+    flex-direction: row-reverse;
+  }
+
+  // Vertical, label on the left: the circles move to the right edge.
+  &--vertical#{&}--label-start &__item {
+    align-items: flex-end;
+  }
+
+  &--vertical#{&}--label-start &__trigger {
+    flex-direction: row-reverse;
+  }
+
+  &--vertical#{&}--label-start &__text {
+    align-items: flex-end;
+    text-align: end;
+  }
+
+  // The connector runs under the circle, so it is offset from the step's right edge.
+  &--vertical#{&}--label-start &__separator {
+    margin-inline-start: auto;
+    margin-inline-end: calc(var(--s-space-1) + 1.25rem);
+  }
+
+  // Vertical, label above or below the circle: the step becomes a centered column, as in the
+  // horizontal layout. Everything is centered at once — the step, the label and the connector:
+  // otherwise steps with labels of different widths would form a staircase.
+  &--vertical#{&}--label-top &__item,
+  &--vertical#{&}--label-bottom &__item {
+    align-items: center;
+  }
+
+  &--vertical#{&}--label-top &__trigger,
+  &--vertical#{&}--label-bottom &__trigger {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-space-2);
+  }
+
+  &--vertical#{&}--label-top &__text,
+  &--vertical#{&}--label-bottom &__text {
+    align-items: center;
+    text-align: center;
+  }
+
+  &--vertical#{&}--label-top &__separator,
+  &--vertical#{&}--label-bottom &__separator {
+    margin-inline: 0;
+  }
+
+  &--vertical#{&}--label-top &__trigger {
+    flex-direction: column-reverse;
+  }
+}

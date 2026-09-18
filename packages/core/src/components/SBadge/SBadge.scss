@@ -1,0 +1,71 @@
+@use '../../styles/tools';
+@use 'sass:map';
+
+// Background/text color per variant comes from semantic tokens. Values are wrapped in
+// var(--s-badge-c…, <role>), so the color prop overrides base/subtle/on, and without it the role
+// applies. primary is a fill (bg=base, fg=on); statuses and neutral are soft (bg=subtle, fg=base).
+$variants: (
+  neutral: (
+    bg: var(--s-badge-c-subtle, var(--s-color-bg-muted)),
+    fg: var(--s-badge-c, var(--s-color-text-muted)),
+  ),
+  primary: (
+    bg: var(--s-badge-c, var(--s-color-primary)),
+    fg: var(--s-badge-c-on, var(--s-color-primary-contrast)),
+  ),
+  positive: (
+    bg: var(--s-badge-c-subtle, var(--s-color-positive-subtle)),
+    fg: var(--s-badge-c, var(--s-color-positive-text)),
+  ),
+  warning: (
+    bg: var(--s-badge-c-subtle, var(--s-color-warning-subtle)),
+    fg: var(--s-badge-c, var(--s-color-warning-text)),
+  ),
+  negative: (
+    bg: var(--s-badge-c-subtle, var(--s-color-negative-subtle)),
+    fg: var(--s-badge-c, var(--s-color-negative-text)),
+  ),
+);
+
+.s-badge {
+  // Sets its own line-height: 1, so the reset skips the metric to avoid a duplicate.
+  @include tools.reset-inherited($typography: false);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-space-1);
+  font-weight: var(--s-font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: var(--s-radius-full);
+
+  &--square {
+    border-radius: 0;
+  }
+
+  @each $name, $c in $variants {
+    &--#{$name} {
+      background-color: map.get($c, bg);
+      color: map.get($c, fg);
+    }
+  }
+
+  &--sm {
+    height: 1.25rem;
+    padding: 0 var(--s-space-2);
+    font-size: var(--s-font-size-xs);
+  }
+
+  &--md {
+    height: 1.5rem;
+    padding: 0 var(--s-space-2);
+    font-size: var(--s-font-size-sm);
+  }
+
+  // lg is needed on its own and because the comfortable preset sets size: lg globally:
+  // without this rule the badge would have no height and collapse onto the text.
+  &--lg {
+    height: 1.75rem;
+    padding: 0 var(--s-space-3);
+    font-size: var(--s-font-size-base);
+  }
+}

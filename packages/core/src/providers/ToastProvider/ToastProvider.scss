@@ -1,0 +1,39 @@
+@use '../../styles/tools';
+
+.s-toast-viewport {
+  @include tools.reset-inherited;
+  position: fixed;
+  z-index: var(--s-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-space-3);
+  width: max-content;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  outline: none;
+
+  // In the top corners the stack grows downward, so the newest toast would end up farther from
+  // the edge — column-reverse brings it back to the edge, as in the bottom corners.
+  &--top-left,
+  &--top-right {
+    inset-block-start: var(--s-space-4);
+    flex-direction: column-reverse;
+  }
+
+  &--bottom-left,
+  &--bottom-right {
+    inset-block-end: var(--s-space-4);
+  }
+
+  &--top-left,
+  &--bottom-left {
+    inset-inline-start: var(--s-space-4);
+  }
+
+  &--top-right,
+  &--bottom-right {
+    inset-inline-end: var(--s-space-4);
+  }
+}

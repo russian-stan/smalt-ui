@@ -1,0 +1,64 @@
+// Base layer: the .s-root boundary container + an optional global normalize.
+@use 'tools';
+@use 'settings';
+
+@layer smalt.base {
+  // The global normalize is the only thing the library writes to the global scope besides the
+  // :root tokens. `$reset: false` turns it off for embedding into a third-party page.
+  @if settings.$reset {
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    // Form controls do not inherit typography by default — restore inheritance.
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      font: inherit;
+    }
+  }
+
+  // Isolation container — the required wrapper of the app/subtree: an inheritance boundary
+  // (reset-inherited), a new stacking context and base typography/color, like Vuetify's
+  // `.v-application`. Reka portals go to body outside the wrapper, so their roots are reset
+  // separately, in the overlay/content component styles.
+  .s-root {
+    @include tools.reset-inherited;
+    isolation: isolate;
+    color: var(--s-color-text);
+    font-size: var(--s-font-size-base);
+  }
+
+  // Full-screen app: background and height. An opt-in modifier: a SUBTREE wrapper
+  // (a widget on a third-party page) must not repaint the background.
+  .s-root--app {
+    min-block-size: 100dvh;
+    background-color: var(--s-color-bg);
+  }
+
+  .s-root :where(a) {
+    color: var(--s-color-primary-text);
+    text-decoration: none;
+  }
+
+  .s-root :where(a:hover) {
+    text-decoration: underline;
+  }
+
+  // Fallback focus ring for "bare" focusable elements inside the container.
+  // The wrapper is in :where too, so the whole selector is (0,0,0) and component rules (e.g.
+  // `.s-input__field { outline: none }`, (0,1,0)) ALWAYS win regardless of CSS load order
+  // (in the built package component CSS is injected before styles.css — with equal
+  // specificity the fallback would otherwise override `outline: none`).
+  :where(.s-root) :where(*:focus-visible) {
+    @include tools.focus-ring;
+  }
+}

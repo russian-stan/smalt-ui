@@ -1,0 +1,138 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
+import { SFormField } from '../SFormField'
+import { useColorProp, useDefaults, useMessages } from '../../composables'
+import type { SSliderProps } from './types'
+
+const props = withDefaults(defineProps<SSliderProps>(), {
+  invalid: false,
+  required: false,
+  disabled: false,
+  min: 0,
+  max: 100,
+  step: 1,
+  showValue: false,
+  valueAlways: false,
+})
+const p = useDefaults(props, 'SSlider')
+
+const colorStyle = useColorProp(p, 's-slider')
+const m = useMessages()
+
+/**
+ * Slider value: a number for a single thumb or an array for a range. Two-way binding via
+ * `v-model`. Without an explicit value the slider starts at `min` (see the getter below), not
+ * 0: a default in `defineModel` cannot reference `props`, so the fallback lives in the getter.
+ */
+const model = defineModel<number | number[]>()
+
+/**
+ * A range has two thumbs, and the shared field name does not tell them apart by ear, so the
+ * edges get separate labels ("Price: start" / "Price: end").
+ */
+function thumbLabel(index: number, total: number): string | undefined {
+  if (total < 2) return p.label
+  const edge = index === 0 ? m.value.rangeStart : index === total - 1 ? m.value.rangeEnd : undefined
+  if (!edge) return p.label
+  return p.label ? `${p.label}: ${edge}` : edge
+}
+
+// Reka works with an array of values; for a single thumb it is unwrapped back into a number.
+const arrayValue = computed({
+  get: () => (Array.isArray(model.value) ? model.value : [model.value ?? p.min]),
+  set: (v: number[]) => {
+    model.value = Array.isArray(model.value) ? v : v[0]
+  },
+})
+
+/**
+ * The value bubble sits above the active thumb, so its visibility is derived from the control's
+ * own state: hover, focus, and drag (Reka exposes no DOM attribute for dragging that plain CSS
+ * could hook into).
+ */
+const dragging = ref(false)
+const hovered = ref(false)
+const focused = ref(false)
+const valueVisible = computed(
+  () => !!p.showValue && (!!p.valueAlways || dragging.value || hovered.value || focused.value),
+)
+
+function onDragStart(): void {
+  dragging.value = true
+  hovered.value = true
+}
+function onDragEnd(): void {
+  dragging.value = false
+}
+
+defineSlots<{
+  /**
+   * Value bubble content. Defaults to the number; to show "%" or a "20–70" range, format it
+   * here. Rendered for each thumb.
+   */
+  value: (props: { value: number; index: number }) => unknown
+}>()
+</script>
+
+<template>
+  <SFormField
+    :id="p.id"
+    :floating-label="false"
+    class="s-slider"
+    :style="colorStyle"
+    :label="p.label"
+    :hint="p.hint"
+    :error="p.error"
+    :invalid="p.invalid"
+    :required="p.required"
+  >
+    <template #default="{ id: fieldId, describedBy, invalid: fieldInvalid }">
+      <SliderRoot
+        v-model="arrayValue"
+        class="s-slider__control"
+        :class="{ 's-slider__control--value-always': p.showValue && p.valueAlways }"
+        :min="p.min"
+        :max="p.max"
+        :step="p.step"
+        :disabled="p.disabled"
+        @pointerenter="hovered = true"
+        @pointerleave="hovered = false"
+        @pointerdown="onDragStart"
+        @pointerup="onDragEnd"
+        @pointercancel="onDragEnd"
+        @focusin="focused = true"
+        @focusout="focused = false"
+      >
+        <SliderTrack class="s-slider__track">
+          <SliderRange class="s-slider__range" />
+        </SliderTrack>
+        <SliderThumb
+          v-for="(_, i) in arrayValue"
+          :id="i === 0 ? fieldId : undefined"
+          :key="i"
+          class="s-slider__thumb"
+          :aria-label="thumbLabel(i, arrayValue.length)"
+          :aria-describedby="i === 0 ? describedBy : undefined"
+          :aria-invalid="fieldInvalid || undefined"
+        >
+          <span
+            v-if="p.showValue"
+            class="s-slider__value"
+            :class="{ 's-slider__value--visible': valueVisible }"
+            aria-hidden="true"
+          >
+            <slot
+              name="value"
+              :value="arrayValue[i]"
+              :index="i"
+              >{{ arrayValue[i] }}</slot
+            >
+          </span>
+        </SliderThumb>
+      </SliderRoot>
+    </template>
+  </SFormField>
+</template>
+
+<style src="./SSlider.scss" lang="scss"></style>

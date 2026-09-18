@@ -1,0 +1,92 @@
+@use '../../styles/tools';
+
+.s-rating {
+  @include tools.reset-inherited;
+  display: inline-flex;
+  gap: var(--s-space-1);
+
+  // Only disabled is dimmed: readonly also blocks changes to the rating but must not look
+  // faded.
+  &--disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &__item {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+  }
+
+  // Step hit area: a transparent button over the star. With allow-half each star has two
+  // steps, and the left half (0.5) sits higher in z-index.
+  &__step {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--reka-rating-item-step-width);
+    z-index: var(--reka-rating-item-step-z-index);
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: var(--s-radius-sm);
+    cursor: inherit;
+
+    &:focus-visible {
+      @include tools.focus-ring;
+    }
+  }
+
+  &__hit {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &--disabled &__step {
+    cursor: not-allowed;
+  }
+
+  &--readonly &__step {
+    cursor: default;
+  }
+
+  // Two stacked stars: an outline background + a fill layer on top, clipped by the fill ratio.
+  &__glyphs {
+    position: relative;
+    display: inline-flex;
+    @include tools.transition(transform);
+  }
+
+  // Only the visual grows: hit areas stay in place, otherwise a pointer on a step boundary
+  // would "jump out" of the hovered element and jitter.
+  &:not(&--disabled, &--readonly) &__item:hover &__glyphs {
+    transform: scale(1.2);
+  }
+
+  // The star is filled with currentColor (CSS overrides fill="none" on SIcon).
+  &__star {
+    fill: currentColor;
+    @include tools.transition(color, clip-path);
+  }
+
+  &__star--bg {
+    color: var(--s-color-border-strong);
+  }
+
+  // Gold amber is used directly: rating stars are not a status, so the warning role does not fit.
+  &__star--fg {
+    position: absolute;
+    inset: 0;
+    color: var(--s-rating-c, var(--s-amber));
+    clip-path: inset(0 100% 0 0);
+  }
+
+  &__item--active &__star--fg {
+    clip-path: inset(0 0 0 0);
+  }
+
+  &__item--half &__star--fg {
+    clip-path: inset(0 50% 0 0);
+  }
+}

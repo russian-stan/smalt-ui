@@ -1,0 +1,43 @@
+@use '../../styles/tools';
+.s-separator {
+  @include tools.reset-inherited;
+  flex-shrink: 0;
+  border: none;
+  background-color: var(--s-color-border);
+
+  &--horizontal {
+    width: 100%;
+    height: 1px;
+  }
+
+  &--vertical {
+    // Height comes from align-self: stretch along the row of a flex or grid parent. height: 100%
+    // zeroes it: the percentage is taken from the parent, whose height is usually auto, and the
+    // separator in a regular button bar just disappears.
+    align-self: stretch;
+    width: 1px;
+  }
+
+  &--labeled {
+    display: flex;
+    align-items: center;
+    gap: var(--s-space-3);
+    width: 100%;
+    background-color: transparent;
+  }
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    border: none;
+    background-color: var(--s-color-border);
+  }
+
+  &__label {
+    flex-shrink: 0;
+    font-family: var(--s-font-sans);
+    font-size: var(--s-font-size-sm);
+    line-height: var(--s-line-height-tight);
+    color: var(--s-color-text-muted);
+  }
+}

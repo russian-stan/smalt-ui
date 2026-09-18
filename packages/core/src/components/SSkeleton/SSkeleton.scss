@@ -1,0 +1,50 @@
+@use '../../styles/tools';
+.s-skeleton {
+  @include tools.reset-inherited;
+  display: block;
+  background-color: var(--s-color-bg-muted);
+  border-radius: var(--s-radius-md);
+
+  &--text {
+    width: 100%;
+    height: 1em;
+    border-radius: var(--s-radius-sm);
+  }
+
+  &--rect {
+    width: 100%;
+    height: 100%;
+  }
+
+  &--circle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--s-radius-full);
+  }
+
+  &--animated {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, var(--s-color-surface), transparent);
+      transform: translateX(-100%);
+      animation: s-skeleton-shimmer 1.5s var(--s-ease-standard) infinite;
+      content: '';
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-skeleton--animated::after {
+    animation: none;
+  }
+}
+
+@keyframes s-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

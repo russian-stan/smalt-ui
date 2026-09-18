@@ -1,0 +1,93 @@
+@use '../../styles/tools';
+
+.s-collapsible {
+  @include tools.reset-inherited;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--s-color-border);
+  border-radius: var(--s-radius-md);
+
+  &--square {
+    border-radius: 0;
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-space-3);
+    width: 100%;
+    padding: var(--s-space-3) var(--s-space-4);
+    font-family: var(--s-font-heading);
+    font-size: var(--s-font-size-sm);
+    font-weight: var(--s-font-weight-medium);
+    // Header color and background go through dedicated tokens: dark or accent headers are
+    // common in designs, and overriding them otherwise would need a higher-specificity rule.
+    color: var(--s-collapsible-trigger-color, var(--s-color-text));
+    text-align: left;
+    cursor: pointer;
+    background-color: var(--s-collapsible-trigger-bg, transparent);
+    border: none;
+    @include tools.transition(background-color);
+    @include tools.state-layer;
+    @include tools.disabled-state;
+  }
+
+  &__title {
+    flex: 1;
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    color: var(--s-collapsible-trigger-color, var(--s-color-text-muted));
+    @include tools.transition(transform);
+  }
+
+  // Reka sets data-state="open" on the trigger when expanded.
+  &__trigger[data-state='open'] &__chevron {
+    transform: rotate(180deg);
+  }
+
+  &__content {
+    overflow: hidden;
+
+    &[data-state='open'] {
+      animation: s-collapsible-down var(--s-duration-base) var(--s-ease-standard);
+    }
+
+    &[data-state='closed'] {
+      animation: s-collapsible-up var(--s-duration-base) var(--s-ease-standard);
+    }
+  }
+
+  &__body {
+    padding: 0 var(--s-space-4) var(--s-space-4);
+    font-family: var(--s-font-sans);
+    font-size: var(--s-font-size-sm);
+    color: var(--s-color-text-muted);
+  }
+}
+
+@keyframes s-collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-collapsible-content-height);
+  }
+}
+
+@keyframes s-collapsible-up {
+  from {
+    height: var(--reka-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-collapsible__content {
+    animation: none;
+  }
+}

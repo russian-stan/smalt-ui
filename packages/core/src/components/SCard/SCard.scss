@@ -1,0 +1,73 @@
+@use '../../styles/tools';
+.s-card {
+  @include tools.reset-inherited;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--s-color-text);
+  background-color: var(--s-color-surface);
+  border-radius: var(--s-radius-md);
+  // Own variables reset inherited ones: a card inside a card keeps its own elevation and
+  // padding.
+  --s-card-elevation: initial;
+  --s-card-padding: initial;
+  // The shadow combines two layers in one declaration: the selection ring and the elevation
+  // level. box-shadow is not additive, so separate rules would replace each other entirely,
+  // and a selected card would lose its shadow at the moment of selection.
+  box-shadow:
+    var(--s-card-ring, 0 0 #0000),
+    var(--s-card-elevation, var(--s-card-variant-elevation, 0 0 #0000));
+
+  &--square {
+    border-radius: 0;
+  }
+
+  &--outline {
+    border: 1px solid var(--s-color-border);
+  }
+
+  &--elevated {
+    --s-card-variant-elevation: var(--s-elevation-1);
+  }
+
+  // Card as a selectable item (plans, sizes): state layer and focus ring.
+  // focus-within rather than focus-visible: focus usually lands on a hidden control inside.
+  &--interactive {
+    cursor: pointer;
+    @include tools.state-layer(var(--s-color-primary));
+    @include tools.transition(border-color, box-shadow);
+
+    &:focus-visible,
+    &:focus-within:has(:focus-visible) {
+      @include tools.focus-ring;
+    }
+  }
+
+  // The selected card border is drawn with an inset shadow: the elevated variant has no border,
+  // and changing border on selection would shift the content by a pixel.
+  &--selected {
+    border-color: var(--s-color-primary);
+    --s-card-ring: inset 0 0 0 1px var(--s-color-primary);
+  }
+
+  &--disabled {
+    @include tools.disabled-state;
+    pointer-events: none;
+  }
+
+  &__header {
+    padding: var(--s-card-padding, var(--s-space-4));
+    font-family: var(--s-font-heading);
+    font-weight: var(--s-font-weight-semibold);
+    border-bottom: 1px solid var(--s-color-border);
+  }
+
+  &__body {
+    padding: var(--s-card-padding, var(--s-space-4));
+  }
+
+  &__footer {
+    padding: var(--s-card-padding, var(--s-space-4));
+    border-top: 1px solid var(--s-color-border);
+  }
+}

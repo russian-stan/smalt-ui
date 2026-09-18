@@ -1,0 +1,149 @@
+@use '../../styles/tools';
+
+// Control sizes come from the shared map (see tools.control-size).
+$sizes: sm, md, lg;
+
+.s-button {
+  // typescale sets its own line-height/letter-spacing, so the reset skips them (no duplicate).
+  @include tools.reset-inherited($typography: false);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-space-2);
+  @include tools.typescale('label-lg');
+  border: 1px solid transparent;
+  border-radius: var(--s-radius-md);
+  cursor: pointer;
+  user-select: none;
+  @include tools.transition(background-color, box-shadow, color, border-color);
+  @include tools.disabled-state;
+
+  // A polymorphic button (as="a" etc.) cannot carry native disabled — the state is announced
+  // through aria-disabled, so it is dimmed by the same attribute.
+  &[aria-disabled='true'] {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+
+  @each $name in $sizes {
+    &--#{$name} {
+      @include tools.control-size($name);
+    }
+  }
+
+  &--round {
+    border-radius: var(--s-radius-full);
+  }
+
+  // Overrides --round when both are set.
+  &--square {
+    border-radius: 0;
+  }
+
+  // Icon button: a square sized by the control height. Without a label, the horizontal padding
+  // from control-size would make it wider than its height and shift the content.
+  &--icon-only {
+    aspect-ratio: 1;
+    padding-inline: 0;
+  }
+
+  // Flat button: the variant shadow is reset through the button's own tokens, so cards and
+  // popovers keep their shadows.
+  &--flat {
+    --s-button-elevation: none;
+    --s-button-elevation-hover: none;
+  }
+
+  // filled (MD): fill + elevation. Hover/active darken toward the brand tokens
+  // (--s-color-primary-hover/-active) instead of a white state-layer overlay: a saturated
+  // brand color should turn darker on hover, not lighter.
+  &--primary {
+    color: var(--s-button-c-on, var(--s-color-primary-contrast));
+    background-color: var(--s-button-c, var(--s-color-primary));
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):hover {
+      background-color: var(--s-button-c-hover, var(--s-color-primary-hover));
+    }
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):active {
+      background-color: var(--s-button-c-active, var(--s-color-primary-active));
+    }
+  }
+
+  &--secondary {
+    color: var(--s-button-c-on, var(--s-color-secondary-contrast));
+    background-color: var(--s-button-c, var(--s-color-secondary));
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):hover {
+      background-color: var(--s-button-c-hover, var(--s-color-secondary-hover));
+    }
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):active {
+      background-color: var(--s-button-c-active, var(--s-color-secondary-active));
+    }
+  }
+
+  &--outline {
+    color: var(--s-button-c, var(--s-color-primary-text));
+    background-color: transparent;
+    border-color: var(--s-color-outline);
+    @include tools.state-layer(var(--s-button-c, var(--s-color-primary)));
+  }
+
+  &--ghost {
+    color: var(--s-button-c, var(--s-color-primary-text));
+    background-color: transparent;
+    @include tools.state-layer(var(--s-button-c, var(--s-color-primary)));
+  }
+
+  &--negative {
+    color: var(--s-button-c-on, var(--s-color-negative-contrast));
+    background-color: var(--s-button-c, var(--s-color-negative));
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):hover {
+      background-color: var(--s-button-c-hover, var(--s-color-negative-hover));
+    }
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):active {
+      background-color: var(--s-button-c-active, var(--s-color-negative-active));
+    }
+  }
+
+  // Filled variants share the shadow; a variant sets only colors. The disabled state is matched
+  // by two selectors: a polymorphic button (as="a") carries aria-disabled rather than native
+  // disabled and would stay raised without the second one.
+  &--primary,
+  &--secondary,
+  &--negative {
+    box-shadow: var(--s-button-elevation, var(--s-elevation-1));
+
+    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):hover {
+      box-shadow: var(--s-button-elevation-hover, var(--s-elevation-2));
+    }
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      box-shadow: none;
+    }
+  }
+
+  &__affix {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__spinner {
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--s-radius-full);
+    animation: s-button-spin 0.6s linear infinite;
+  }
+}
+
+@keyframes s-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

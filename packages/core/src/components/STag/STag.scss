@@ -1,0 +1,29 @@
+@use '../../styles/tools';
+
+// The STag root is an SBadge (`.s-badge` already carries reset-inherited), so the reset is not
+// repeated here: only the extra gap and the remove button.
+.s-tag {
+  gap: var(--s-space-1);
+}
+
+.s-tag__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: var(--s-radius-full);
+  opacity: 0.7;
+  @include tools.transition(opacity);
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    @include tools.focus-ring;
+  }
+}
