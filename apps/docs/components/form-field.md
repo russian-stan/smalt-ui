@@ -132,7 +132,7 @@ clicking it still focuses the field.
 <Demo>
   <SFormField hint="Limit: $1,000">
     <template #label>
-      <a href="/components/form-field">Declared value</a>
+      <a href="./form-field">Declared value</a>
     </template>
     <template #default="{ id, describedBy }">
       <SInput

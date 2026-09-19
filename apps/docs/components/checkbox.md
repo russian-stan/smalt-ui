@@ -182,8 +182,8 @@ You do not need to wrap the content in a single element.
      and there would be nothing to wrap. -->
 <Demo style="--demo-field-max: 260px">
   <SCheckbox required>
-    Contains no <a href="/components/checkbox">dangerous</a> or
-    <a href="/components/checkbox">prohibited</a> goods
+    Contains no <a href="./checkbox">dangerous</a> or
+    <a href="./checkbox">prohibited</a> goods
   </SCheckbox>
 
 <template #code>

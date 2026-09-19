@@ -48,7 +48,14 @@ const styleSidebar = [
   },
 ]
 
+/**
+ * Site root. GitHub Pages serves the docs from a subfolder (`/smalt-ui/`), so the deploy workflow
+ * sets DOCS_BASE; locally and in the Playwright checks the site stays at `/`.
+ */
+const base = process.env.DOCS_BASE ?? '/'
+
 export default defineConfig({
+  base,
   title: 'Smalt UI',
   description: 'UI library for Vue 3 and Nuxt',
   lang: 'en-US',
@@ -60,9 +67,9 @@ export default defineConfig({
      * the VitePress toggle, so both mechanisms read the same stored choice.
      */
     ['script', {}, colorModeScript({ storageKey: 'vitepress-theme-appearance' })],
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' }],
-    ['link', { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: `${base}favicon-32x32.png` }],
+    ['link', { rel: 'apple-touch-icon', href: `${base}apple-touch-icon.png` }],
   ],
   themeConfig: {
     logo: { light: '/logo-mark.svg', dark: '/logo-mark-dark.svg' },
