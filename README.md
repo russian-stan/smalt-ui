@@ -14,6 +14,12 @@
 
 # Smalt UI
 
+[![npm](https://img.shields.io/npm/v/@smalt-ui/core?label=%40smalt-ui%2Fcore)](https://www.npmjs.com/package/@smalt-ui/core)
+[![CI](https://github.com/technical-jade/smalt-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/technical-jade/smalt-ui/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+**[Documentation](https://technical-jade.github.io/smalt-ui/)**
+
 UI library for **Vue 3** and **Nuxt** built on [Reka UI](https://reka-ui.com/) and design tokens.
 A **pnpm** + **TypeScript** monorepo.
 
