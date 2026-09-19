@@ -32,12 +32,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # The console smoke test (root @playwright/test) and the Vitest browser project
-      # (packages/core) pin different Playwright versions, each with its own Chromium build.
+      # One Playwright version serves both the console smoke test and the Vitest browser project.
       - name: Install Playwright Chromium
-        run: |
-          pnpm exec playwright install --with-deps chromium
-          pnpm --filter @smalt-ui/core exec playwright install chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - run: pnpm verify
 

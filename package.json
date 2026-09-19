@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.10.0",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.9.0",
