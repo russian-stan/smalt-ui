@@ -50,7 +50,7 @@
     "@nuxt/kit": "^3.0.0 || ^4.0.0"
   },
   "peerDependencies": {
-    "@smalt-ui/core": "*",
+    "@smalt-ui/core": "workspace:^",
     "reka-ui": "^2.10.0"
   },
   "devDependencies": {
