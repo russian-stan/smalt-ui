@@ -46,3 +46,37 @@ jobs:
           path: test-results
           if-no-files-found: ignore
           retention-days: 7
+
+  # Pending changesets open or update the "version packages" PR; merging it publishes to npm.
+  release:
+    name: Release
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      # npm trusted publishing (OIDC): no npm token is stored in the repository.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      # Trusted publishing needs npm >= 11.5, which ships with Node 24 (Node 22 has npm 10).
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # v1 matches Changesets v2; v2 of the action requires Changesets v3 and pnpm 10.
+      - uses: changesets/action@v1.9.0
+        with:
+          version: pnpm version-packages
+          publish: pnpm release
+          commit: 'chore: version packages'
+          title: 'chore: version packages'
+          createGithubReleases: true
